@@ -1,0 +1,8 @@
+-e ./
+
+codespell
+flake8
+mypy
+pytest
+twine
+wheel

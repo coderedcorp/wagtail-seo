@@ -1,0 +1,4 @@
+include LICENSE README.md
+graft wagtailseo
+global-exclude __pycache__
+global-exclude *.py[co]
