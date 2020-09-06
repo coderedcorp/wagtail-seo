@@ -1,4 +1,4 @@
-from setuptools import setup, find_packages
+from setuptools import setup
 from wagtailseo import __version__
 
 with open("README.md", encoding="utf8") as readme_file:
@@ -16,9 +16,8 @@ setup(
     license="BSD license",
     include_package_data=True,
     packages=["wagtailseo"],
-    install_requires=[
-        "wagtail>=2.0"
-    ],
+    python_requires=">=3.5",
+    install_requires=["wagtail>=2.0"],
     classifiers=[
         "Intended Audience :: Developers",
         "License :: OSI Approved :: BSD License",

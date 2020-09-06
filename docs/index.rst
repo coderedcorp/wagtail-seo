@@ -17,3 +17,13 @@ This package was originally part of `coderedcms
 live production sites.
 
 Requires Wagtail >= 2.0
+
+
+Contents
+--------
+
+.. toctree::
+    :maxdepth: 2
+    :titlesonly:
+
+    install

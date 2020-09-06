@@ -1,8 +1,12 @@
 -e ./
 
-codespell
+black
+# Replace with codespell>=1.18
+https://github.com/codespell-project/codespell/archive/master.zip
 flake8
 mypy
 pytest
+pytest-cov
+pytest-django
 twine
 wheel

@@ -37,6 +37,7 @@ To set up your development environment:
 4. Next, run the static analysis tools:
 
    ```
+   black .
    flake8 ./wagtailseo/
    mypy ./wagtailseo/
    codespell ./wagtailseo/ ./docs/
