@@ -84,8 +84,10 @@ html_theme_options = {
     "sidebar_link": "#212529",
     "sidebar_width": "270px",
     "page_width": "1000px",
-    "font_family": '"Palatino", "Palatino Linotype", "Linux Libertine", serif',
-    "head_font_family": '"Palatino", "Palatino Linotype", "Linux Libertine", serif',
+    "font_family": '"Georgia Pro", "Georgia", "Linux Libertine", serif',
+    "head_font_family": '"Georgia Pro", "Georgia", "Linux Libertine", serif',
+    "code_font_family": '"Courier Prime", "Courier", monospace',
+    "show_powered_by": False,
 }
 
 # Add any paths that contain custom static files (such as style sheets) here,

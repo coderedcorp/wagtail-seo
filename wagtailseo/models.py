@@ -23,7 +23,7 @@ from wagtailseo.blocks import OpenHoursBlock, StructuredDataActionBlock
 from wagtailseo.icon import SEO_ICON
 
 
-class OpenGraphType(Enum):
+class SeoType(Enum):
     ARTICLE = "article"
     WEBSITE = "website"
 
@@ -165,6 +165,9 @@ class SeoMixin(Page):
         ),
     )
 
+    # The content type of this page, for search engines.
+    seo_content_type = SeoType.WEBSITE
+
     # List of text attribute names on this model, in order of preference,
     # for use as the SEO description.
     seo_description_sources = [
@@ -182,6 +185,9 @@ class SeoMixin(Page):
     seo_pagetitle_sources = [
         "seo_title",  # Comes from wagtail.Page
     ]
+
+    # The style of Twitter card to show.
+    seo_twitter_card = TwitterCard.SUMMARY
 
     @property
     def seo_amp_url(self) -> str:
@@ -266,7 +272,7 @@ class SeoMixin(Page):
         Gets the correct Open Graph type for this page.
         Override in your Page model as necessary.
         """
-        return OpenGraphType.WEBSITE.value
+        return self.seo_content_type.value
 
     @property
     def seo_sitename(self) -> str:
@@ -302,12 +308,12 @@ class SeoMixin(Page):
         return self.first_published_at
 
     @property
-    def seo_twitter_card(self) -> str:
+    def seo_twitter_card_content(self) -> str:
         """
         Gets the correct style of twitter card for this page.
         Override in your Page model as necessary.
         """
-        return TwitterCard.SUMMARY.value
+        return self.seo_twitter_card.value
 
     @property
     def seo_struct_org_name(self) -> str:
@@ -430,6 +436,19 @@ class SeoMixin(Page):
         return json.dumps(self.seo_struct_org_dict, cls=utils.StructDataEncoder)
 
     @property
+    def seo_struct_publisher_dict(self) -> Optional[dict]:
+        """
+        Gets the base organization info from either this page, or the root page.
+        """
+        if self.struct_org_type:
+            return self.seo_struct_org_base_dict
+        else:
+            root_page = self.get_site().root_page.specific
+            if hasattr(root_page, "seo_struct_org_base_dict"):
+                return root_page.seo_struct_org_base_dict
+        return None
+
+    @property
     def seo_struct_article_dict(self) -> dict:
         sd_dict = {
             "@context": "http://schema.org",
@@ -454,13 +473,9 @@ class SeoMixin(Page):
                 {"image": utils.get_struct_data_images(self.get_site(), self.seo_image)}
             )
 
-        # Use this page's organization, or the root page's organization as publisher.
-        if self.struct_org_type:
-            sd_dict.update({"publisher": self.seo_struct_org_base_dict})
-        else:
-            root_page = self.get_site().root_page.specific
-            if hasattr(root_page, "seo_struct_org_base_dict"):
-                sd_dict.update({"publisher": root_page.seo_struct_org_base_dict})
+        # Publisher, if available.
+        if self.seo_struct_publisher_dict:
+            sd_dict.update({"publisher": self.seo_struct_publisher_dict})
 
         return sd_dict
 

@@ -39,9 +39,32 @@ show up in the page editor, you may also want to override the promote panels.
 .. code-block:: python
 
     # models.py
+    from wagtailseo.models import SeoMixin
+
 
     class MyPage(SeoMixin, Page):
         ...
+
+        promote_panels = SeoMixin.seo_panels
+
+Wagtail SEO also supports special types for article-style pages (news, blog
+posts, etc.), and controls for Twitter card previews. Article-style pages should
+be indicated as such:
+
+.. code-block:: python
+
+    # models.py
+    from wagtailseo.models import SeoMixin, SeoType, TwitterCard
+
+    class ArticlePage(SeoMixin, Page):
+        ...
+
+        # Indicate this is article-style content.
+        seo_content_type = SeoType.ARTICLE
+
+        # Change the Twitter card style.
+        seo_twitter_card = TwitterCard.LARGE
+
         promote_panels = SeoMixin.seo_panels
 
 The ``SeoMixin`` adds many new fields to the page. So now make and apply a
@@ -71,4 +94,4 @@ and a link to an AMP version of the page (if applicable).
 All done. Your page will now render with just about every form of metadata a
 search engine or social media site could ask for!
 
-Next we will look at :doc:`customizing metadata values →<customize-meta>`
+Next we will look at :doc:`editing SEO metadata →<edit-meta>`

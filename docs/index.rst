@@ -1,9 +1,11 @@
 Wagtail SEO Documentation
 =========================
 
-Search engine and social media optimization for Wagtail.
+*Search engine and social media optimization for Wagtail*.
 
-(COMING SOON - Work in progress)
+Instantly enable optimized search result and social media previews for your
+Wagtail site. Wagtail SEO provides support for: meta tags, Open Graph, Google
+rich results (structured data), and AMP.
 
 `GitHub <https://github.com/coderedcorp/wagtail-seo>`_ |
 `PyPI <https://pypi.org/project/wagtail-seo/>`_
@@ -26,6 +28,7 @@ Contents
     :maxdepth: 2
     :titlesonly:
 
-    install
-    customize-meta
-    customize-editor
+    Getting Started <getting-started/index>
+    Customizing <customizing/index>
+    Test Metadata <test-meta>
+    Contributing <contributing>

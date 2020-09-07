@@ -1,5 +1,5 @@
 from wagtail.core.models import Page
-from wagtailseo.models import OpenGraphType, SeoMixin
+from wagtailseo.models import SeoMixin, SeoType, TwitterCard
 
 
 class WagtailPage(Page):
@@ -17,17 +17,18 @@ class SeoPage(SeoMixin, Page):
 
     template = "home/page.html"
 
-    # To override the contents of the promote tab.
     promote_panels = SeoMixin.seo_panels
 
 
 class ArticlePage(SeoMixin, Page):
     """
-    Display as Open Graph article type, AMP content.
+    Display as article type which enables corresponding Open Graph, Structured
+    Data, and AMP content.
     """
 
     template = "home/page.html"
 
-    seo_og_type = OpenGraphType.ARTICLE.value
+    seo_content_type = SeoType.ARTICLE
+    seo_twitter_card = TwitterCard.LARGE
 
     promote_panels = SeoMixin.seo_panels
