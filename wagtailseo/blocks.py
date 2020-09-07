@@ -37,15 +37,20 @@ class MultiSelectBlock(blocks.FieldBlock):
 
 class OpenHoursValue(blocks.StructValue):
     """
-    Renders selected days as a json list.
+    Renders OpenHours in Structured Data format.
     """
 
     @property
-    def days_json(self):
+    def struct_dict(self) -> dict:
         """
-        Custom property to return days as json list instead of default python list.
+        Returns a dictionary in structured data format.
         """
-        return json.dumps(self["days"])
+        return {
+            "@type": "OpeningHoursSpecification",
+            "dayOfWeek": self["days"],
+            "opens": self["start_time"],  # |date:'H:i'
+            "closes": self["end_time"],  # |date:'H:i'
+        }
 
 
 class OpenHoursBlock(blocks.StructBlock):
@@ -54,7 +59,6 @@ class OpenHoursBlock(blocks.StructBlock):
     """
 
     class Meta:
-        template = "wagtailseo/struct_data_hours.json"
         label = _("Open Hours")
         value_class = OpenHoursValue
 
@@ -75,8 +79,48 @@ class OpenHoursBlock(blocks.StructBlock):
             ("Sunday", _("Sunday")),
         ],
     )
-    start_time = blocks.TimeBlock(verbose_name=_("Opening time"))
-    end_time = blocks.TimeBlock(verbose_name=_("Closing time"))
+    start_time = blocks.TimeBlock(
+        verbose_name=_("Opening time"),
+    )
+    end_time = blocks.TimeBlock(
+        verbose_name=_("Closing time"),
+    )
+
+
+class StructuredDataActionValue(blocks.StructValue):
+    """
+    Renders Action in Structured Data format.
+    """
+
+    @property
+    def struct_dict(self) -> dict:
+        sd_dict = {
+            "@type": self["action_type"],
+            "target": {
+                "@type": "EntryPoint",
+                "urlTemplate": self["target"],
+                "inLanguage": self["language"],
+                "actionPlatform": [
+                    "http://schema.org/DesktopWebPlatform",
+                    "http://schema.org/IOSPlatform",
+                    "http://schema.org/AndroidPlatform",
+                ],
+            },
+        }
+        if self["result_type"]:
+            sd_dict.update(
+                {
+                    "result": {
+                        "@type": self["result_type"],
+                        "name": self["result_name"],
+                    }
+                }
+            )
+        if self["extra_json"]:
+            sd_dict.update(
+                json.loads(self["extra_json"]),
+            )
+        return sd_dict
 
 
 class StructuredDataActionBlock(blocks.StructBlock):
@@ -85,8 +129,8 @@ class StructuredDataActionBlock(blocks.StructBlock):
     """
 
     class Meta:
-        template = "wagtailseo/struct_data_action.json"
         label = _("Action")
+        value_class = StructuredDataActionValue
 
     action_type = blocks.ChoiceBlock(
         verbose_name=_("Action Type"),

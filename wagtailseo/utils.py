@@ -1,12 +1,24 @@
 import re
+from datetime import datetime, time
+from json import JSONEncoder
+from typing import List, Union
 
 from django.conf import settings
 from wagtail.core.models import Site
+from wagtail.images.models import AbstractImage
 
 
 # Matches a protocol, such as https://
 PROTOCOL_RE = re.compile(r"^(\w[\w\.\-\+]*:)*//")
 MEDIA_IS_ABSOLUTE = PROTOCOL_RE.match(settings.MEDIA_URL)
+
+
+def serialize_date(date: Union[datetime, time]) -> str:
+    """
+    Serializes a datetime or time into ISO 8601 format required for Open Graph
+    and Structured Data.
+    """
+    return date.isoformat()
 
 
 def get_absolute_media_url(site: Site) -> str:
@@ -20,3 +32,45 @@ def get_absolute_media_url(site: Site) -> str:
         return ""
 
     return site.root_url
+
+
+def get_struct_data_images(site: Site, image: AbstractImage) -> List[str]:
+    """
+    Google requires multiple different aspect ratios for certain structured
+    data image fields. This will render the image in 1:1, 4:3, and 16:9 aspect
+    ratios with very high resolution and return a list of URLs.
+
+    :param Site site: The Wagtail Site this image belongs to.
+    :param Image image: An image descending from Wagtail AbstractImage model.
+    :rtype: List[str]
+    :return: A list of absolute image URLs.
+    """
+    base_url = get_absolute_media_url(site)
+
+    # Use huge numbers because Wagtail will not upscale, but will max out at the
+    # image's original resolution using the specified aspect ratio.
+    # Google wants them high resolution.
+    img1x1 = base_url + image.get_rendition("fill-10000x10000").url
+    img4x3 = base_url + image.get_rendition("fill-40000x30000").url
+    img16x9 = base_url + image.get_rendition("fill-16000x9000").url
+
+    return [img1x1, img4x3, img16x9]
+
+
+class StructDataEncoder(JSONEncoder):
+    """
+    Serializes data into LD+JSON format required for Structured Data.
+    """
+
+    def default(self, obj):
+
+        # Serialize dates to ISO 8601 format.
+        if isinstance(obj, datetime):
+            return serialize_date(obj)
+
+        # Serialize times to ISO 8601 format.
+        if isinstance(obj, time):
+            return serialize_date(obj)
+
+        # Fallback to default encoding.
+        return super().default(obj)

@@ -19,10 +19,10 @@
 <meta property="og:url" content="{% block og_url %}{{ self.seo_canonical_url }}{% endblock %}" />
 <meta property="og:type" content="{% block og_type %}{{ self.seo_og_type }}{% endblock %}" />
 {% if self.seo_og_type == "article" and self.seo_author %}
-<meta property="article:author" content="{{ self.seo_author }}" />
+<meta property="article:author" content="{% block og_author %}{{ self.seo_author }}{% endblock %}" />
 {% endif %}
 {% if self.seo_og_type == "article" %}
-<meta property="article:published_time" content="{{ self.pub_date|date:'c' }}" />
+<meta property="article:published_time" content="{{ self.seo_published_at|date:'c' }}" />
 <meta property="article:modified_time" content="{{ self.last_published_at|date:'c' }}" />
 {% endif %}
 {% endif %}

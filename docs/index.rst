@@ -27,3 +27,5 @@ Contents
     :titlesonly:
 
     install
+    customize-meta
+    customize-editor

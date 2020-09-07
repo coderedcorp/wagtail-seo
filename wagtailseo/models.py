@@ -1,4 +1,7 @@
+import json
+from datetime import datetime
 from enum import Enum
+from typing import Optional
 
 from django.db import models
 from django.utils.translation import gettext_lazy as _
@@ -15,7 +18,7 @@ from wagtail.images import get_image_model_string
 from wagtail.images.edit_handlers import ImageChooserPanel
 from wagtail.images.models import AbstractImage
 
-from wagtailseo import schema, utils
+from wagtailseo import settings, schema, utils
 from wagtailseo.blocks import OpenHoursBlock, StructuredDataActionBlock
 from wagtailseo.icon import SEO_ICON
 
@@ -217,17 +220,44 @@ class SeoMixin(Page):
         return ""
 
     @property
+    def seo_image(self) -> Optional[AbstractImage]:
+        """
+        Gets the primary Open Graph image of this page.
+        """
+        for attr in self.seo_image_sources:
+            if hasattr(self, attr):
+                image = getattr(self, attr)
+                if isinstance(image, AbstractImage):
+                    return image
+        return None
+
+    @property
     def seo_image_url(self) -> str:
         """
         Gets the absolute URL for the primary Open Graph image of this page.
         """
         base_url = utils.get_absolute_media_url(self.get_site())
+        if self.seo_image:
+            return base_url + self.seo_image.get_rendition("original").url
+        return ""
 
-        for attr in self.seo_image_sources:
-            if hasattr(self, attr):
-                image = getattr(self, attr)
-                if isinstance(image, AbstractImage):
-                    return base_url + image.get_rendition("original").url
+    @property
+    def seo_logo(self) -> Optional[AbstractImage]:
+        """
+        Gets the primary logo of the organization.
+        """
+        if self.struct_org_logo:
+            return self.struct_org_logo
+        return None
+
+    @property
+    def seo_logo_url(self) -> str:
+        """
+        Gets the absolute URL for the organiztion logo.
+        """
+        base_url = utils.get_absolute_media_url(self.get_site())
+        if self.seo_logo:
+            return base_url + self.seo_logo.get_rendition("original").url
         return ""
 
     @property
@@ -259,7 +289,17 @@ class SeoMixin(Page):
                     return text
 
         # Fallback to wagtail.Page.title plus site name.
-        return "{0} - {1}".format(self.title, self.seo_sitename)
+        return "{0} {1} {2}".format(
+            self.title, settings.get("WAGTAILSEO_SEP"), self.seo_sitename
+        )
+
+    @property
+    def seo_published_at(self) -> datetime:
+        """
+        Gets the date this page was first published.
+        Override in your Page model as necessary.
+        """
+        return self.first_published_at
 
     @property
     def seo_twitter_card(self) -> str:
@@ -268,6 +308,165 @@ class SeoMixin(Page):
         Override in your Page model as necessary.
         """
         return TwitterCard.SUMMARY.value
+
+    @property
+    def seo_struct_org_name(self) -> str:
+        """
+        Gets org name for sturctured data using a fallback.
+        """
+        if self.struct_org_name:
+            return self.struct_org_name
+        return self.seo_sitename
+
+    @property
+    def seo_struct_org_base_dict(self) -> dict:
+        """
+        Gets generic "Organization" data for use as a subset of other
+        structured data types (for example, as publisher of an Article).
+
+        See: https://developers.google.com/search/docs/data-types/article
+        """
+
+        # Base info.
+        sd_dict: dict = {
+            "@context": "http://schema.org",
+            "@type": "Organization",
+            "url": self.seo_canonical_url,
+            "name": self.seo_struct_org_name,
+        }
+
+        # Logo.
+        if self.seo_logo:
+            sd_dict.update(
+                {
+                    "logo": {
+                        "@type": "ImageObject",
+                        "url": self.seo_logo_url,
+                    },
+                }
+            )
+
+        # Image.
+        if self.struct_org_image:
+            images = utils.get_struct_data_images(
+                self.get_site(), self.struct_org_image
+            )
+            sd_dict.update({"image": images})
+
+        # Telephone.
+        if self.struct_org_phone:
+            sd_dict.update({"telephone": self.struct_org_phone})
+
+        # Address.
+        if self.struct_org_address_street:
+            sd_dict.update(
+                {
+                    "address": {
+                        "@type": "PostalAddress",
+                        "streetAddress": self.struct_org_address_street,
+                        "addressLocality": self.struct_org_address_locality,
+                        "addressRegion": self.struct_org_address_region,
+                        "postalCode": self.struct_org_address_postal,
+                        "addressCountry": self.struct_org_address_country,
+                    },
+                }
+            )
+
+        return sd_dict
+
+    @property
+    def seo_struct_org_base_json(self) -> str:
+        return json.dumps(self.seo_struct_org_base_dict, cls=utils.StructDataEncoder)
+
+    @property
+    def seo_struct_org_dict(self) -> dict:
+        """
+        Gets full "Organization" structured data on top of base organization data.
+
+        See: https://developers.google.com/search/docs/data-types/local-business
+        """
+
+        # Base info.
+        sd_dict = self.seo_struct_org_base_dict
+
+        # Override org type to use specific type.
+        if self.struct_org_type:
+            sd_dict.update({"@type": self.struct_org_type})
+
+        # Geo coordinates.
+        if self.struct_org_geo_lat and self.struct_org_geo_lng:
+            sd_dict.update(
+                {
+                    "geo": {
+                        "@type": "GeoCoordinates",
+                        "latitude": float(self.struct_org_geo_lat),
+                        "longitude": float(self.struct_org_geo_lng),
+                    },
+                }
+            )
+
+        # Hours of operation.
+        if self.struct_org_hours:
+            hours = []
+            for spec in self.struct_org_hours:
+                hours.append(spec.value.struct_dict)
+            sd_dict.update({"openingHoursSpecification": hours})
+
+        # Actions.
+        if self.struct_org_actions:
+            actions = []
+            for action in self.struct_org_actions:
+                actions.append(action.value.struct_dict)
+            sd_dict.update({"potentialAction": actions})
+
+        # Extra JSON.
+        if self.struct_org_extra_json:
+            sd_dict.update(json.loads(self.struct_org_extra_json))
+
+        return sd_dict
+
+    @property
+    def seo_struct_org_json(self) -> str:
+        return json.dumps(self.seo_struct_org_dict, cls=utils.StructDataEncoder)
+
+    @property
+    def seo_struct_article_dict(self) -> dict:
+        sd_dict = {
+            "@context": "http://schema.org",
+            "@type": "Article",
+            "mainEntityOfPage": {
+                "@type": "WebPage",
+                "@id": self.seo_canonical_url,
+            },
+            "headline": self.title,
+            "description": self.seo_description,
+            "datePublished": self.seo_published_at,
+            "dateModified": self.last_published_at,
+            "author": {
+                "@type": "Person",
+                "name": self.seo_author,
+            },
+        }
+
+        # Image, if available.
+        if self.seo_image:
+            sd_dict.update(
+                {"image": utils.get_struct_data_images(self.get_site(), self.seo_image)}
+            )
+
+        # Use this page's organization, or the root page's organization as publisher.
+        if self.struct_org_type:
+            sd_dict.update({"publisher": self.seo_struct_org_base_dict})
+        else:
+            root_page = self.get_site().root_page.specific
+            if hasattr(root_page, "seo_struct_org_base_dict"):
+                sd_dict.update({"publisher": root_page.seo_struct_org_base_dict})
+
+        return sd_dict
+
+    @property
+    def seo_struct_article_json(self) -> str:
+        return json.dumps(self.seo_struct_article_dict, cls=utils.StructDataEncoder)
 
     seo_meta_panels = [
         MultiFieldPanel(

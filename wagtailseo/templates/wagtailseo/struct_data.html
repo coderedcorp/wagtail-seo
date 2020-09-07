@@ -1,0 +1,15 @@
+{% spaceless %}
+{% block struct_seo_base %}
+{% if self.struct_org_type and settings.wagtailseo.SeoSettings.struct_meta %}
+<script type="application/ld+json">
+  {{ self.seo_struct_org_json | safe }}
+</script>
+{% endif %}
+{% if self.seo_og_type == "article" and settings.wagtailseo.SeoSettings.struct_meta %}
+<script type="application/ld+json">
+  {{ self.seo_struct_article_json | safe }}
+</script>
+{% endif %}
+{% endblock %}
+{% block struct_seo_extra %}{% endblock %}
+{% endspaceless %}
