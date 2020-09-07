@@ -253,7 +253,7 @@ class SeoMixin(Page):
     @property
     def seo_logo_url(self) -> str:
         """
-        Gets the absolute URL for the organiztion logo.
+        Gets the absolute URL for the organization logo.
         """
         base_url = utils.get_absolute_media_url(self.get_site())
         if self.seo_logo:
