@@ -128,3 +128,10 @@ Google officially supports a few dozen types of specific structured data,
 including recipes, events, books, etc. If your website deals in these types of
 data, read how to extend Wagtail SEO's structured data in:
 :doc:`/customizing/customize-meta`.
+
+
+Preview Your Page on Search & Social
+------------------------------------
+
+After editing metadata and publishing a page, you can validate and preview
+the metadata by using online tools. See :doc:`/test-meta`.

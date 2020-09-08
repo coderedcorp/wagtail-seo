@@ -41,7 +41,6 @@ show up in the page editor, you may also want to override the promote panels.
     # models.py
     from wagtailseo.models import SeoMixin
 
-
     class MyPage(SeoMixin, Page):
         ...
 

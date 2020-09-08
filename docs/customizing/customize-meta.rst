@@ -82,8 +82,8 @@ Aside from these special fallbacks, every metadata value is accessed via a
     @property
     def seo_canonical_url(self) -> str:
         """
-        Gets the full/absolute/canonical URL preferred for meta tags and search engines.
-        Override in your Page model as necessary.
+        Gets the full/absolute/canonical URL preferred for meta tags and search
+        engines. Override in your Page model as necessary.
         """
         ...
 
@@ -194,8 +194,8 @@ first make a property on the page model:
 
                 # Google requires multiple different aspect ratios for certain
                 # structured data image fields. This will render the image in
-                # 1:1, 4:3, and 16:9 aspect ratios with very high resolution and
-                # return a list of URLs.
+                # 1:1, 4:3, and 16:9 aspect ratios with very high resolution
+                # and return a list of URLs.
                 "image": get_struct_data_images(self.recipe_photo),
 
                 "author": {
@@ -211,8 +211,8 @@ first make a property on the page model:
             }
 
             # Add the publisher (your organization) using the base organization
-            # details (a lighter version of the full organization for including in
-            # other forms of structured data such as this recipe).
+            # details (a lighter version of the full organization for including
+            # in other forms of structured data such as this recipe).
             if self.seo_struct_publisher_dict:
                 sd_dict.update({"publisher": self.seo_struct_publisher_dict})
 

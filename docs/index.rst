@@ -30,5 +30,5 @@ Contents
 
     Getting Started <getting-started/index>
     Customizing <customizing/index>
-    Test Metadata <test-meta>
+    Tools <test-meta>
     Contributing <contributing>

@@ -21,7 +21,7 @@ class MultiSelectBlock(blocks.FieldBlock):
         help_text: str = None,
         choices: List[Tuple[str, str]] = None,
         widget=None,
-        **kwargs
+        **kwargs,
     ):
         self.field = forms.MultipleChoiceField(
             required=required,

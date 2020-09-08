@@ -14,8 +14,13 @@
 # import sys
 # sys.path.insert(0, os.path.abspath('.'))
 
+import os
 import datetime
 from wagtailseo import __shortversion__
+
+
+DOCS_PATH = os.path.dirname(os.path.abspath(__file__))
+
 
 # -- Project information -----------------------------------------------------
 
@@ -65,7 +70,7 @@ language = None
 exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
 
 # The name of the Pygments (syntax highlighting) style to use.
-pygments_style = "default"
+pygments_style = "trac"
 
 
 # -- Options for HTML output -------------------------------------------------
@@ -82,18 +87,20 @@ html_theme = "alabaster"
 html_theme_options = {
     "body_text": "#212529",
     "sidebar_link": "#212529",
-    "sidebar_width": "270px",
+    "pre_bg": "#fff",
+    "note_bg": "#fff",
     "page_width": "1000px",
-    "font_family": '"Georgia Pro", "Georgia", "Linux Libertine", serif',
-    "head_font_family": '"Georgia Pro", "Georgia", "Linux Libertine", serif',
+    "font_family": '"Crimson Pro", serif',
     "code_font_family": '"Courier Prime", "Courier", monospace',
+    "font_size": "19px",
+    "code_font_size": "0.75em",
     "show_powered_by": False,
 }
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
-html_static_path = []
+html_static_path = [os.path.join(DOCS_PATH, "_static")]
 
 # Custom sidebar templates, must be a dictionary that maps document names
 # to template names.

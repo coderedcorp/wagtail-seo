@@ -1,0 +1,82 @@
+@import url('https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=Crimson+Pro:ital,wght@0,400;0,700;1,400&display=swap');
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  background-color: #f8f9fa;
+  padding: 0;
+  margin: 0 auto;
+}
+
+ul {
+  margin: 10px 0 10px 30px;
+}
+
+div.document {
+  margin: 0 auto;
+}
+
+div.body {
+  min-width: unset;
+  max-width: unset;
+  padding: 15px;
+}
+
+div.sphinxsidebarwrapper h3 {
+  margin-top: 1em;
+}
+
+div.sphinxsidebar ul ul,
+div.sphinxsidebar ul.want-points {
+  list-style: disc;
+}
+
+pre,
+div.highlight pre,
+table.highlighttable pre {
+  margin: 1em 0 1em 1em;
+  padding: 1em 0 1em 1em;
+}
+
+div.admonition {
+  color: #6c757d;
+  font-style: italic;
+  border: none;
+  margin: 1em 0 1em 1em;
+  padding: 1em 0 1em 1em;
+}
+div.admonition p.admonition-title {
+  font-size: inherit;
+  font-weight: bold;
+}
+
+@media (min-width:876px) {
+
+  div.body {
+    padding: 40px 60px;
+  }
+  div.body h1 {
+    font-size: 220%;
+  }
+
+  div.sphinxsidebarwrapper {
+    padding: 50px 20px 0 0;
+  }
+
+  div.sphinxsidebarwrapper h1.logo {
+    font-size: 240%;
+  }
+
+  div.sphinxsidebar input {
+    border: 1.5px solid #e9ecef;
+  }
+  div.sphinxsidebar input[type="submit"] {
+    background-color: #e9ecef;
+  }
+  div.sphinxsidebar input:focus {
+    border: 1.5px solid #66aaff;
+  }
+
+}

@@ -6,3 +6,4 @@ Advanced Customization
 
     Custom Metadata <customize-meta>
     Custom Editor Interface <customize-editor>
+    Django Settings <django-settings>

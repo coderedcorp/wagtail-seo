@@ -38,9 +38,12 @@ This is accomplished by overriding Wagtail's ``get_edit_handler()`` method.
         @cached_classmethod
         def get_edit_handler(cls):
             panels = [
+
+                # Normal Wagtail panels.
                 ObjectList(cls.content_panels, heading="Content"),
                 ObjectList(cls.promote_panels, heading="Promote",),
                 ObjectList(cls.settings_panels, heading="Settings", classname="settings"),
+
                 # Add custom SEO panels in new tab.
                 ObjectList(SeoMixin.seo_panels, heading="SEO", classname="seo"),
             ]
