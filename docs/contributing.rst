@@ -62,6 +62,6 @@ Publishing
 ----------
 
 To create a python package, run the following, which will output the package to
-the `dist/` directory::
+the ``dist/`` directory::
 
    python setup.py sdist bdist_wheel

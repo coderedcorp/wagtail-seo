@@ -1,8 +1,6 @@
 Wagtail SEO Documentation
 =========================
 
-*Search engine and social media optimization for Wagtail*.
-
 Instantly enable optimized search result and social media previews for your
 Wagtail site. Wagtail SEO provides support for: meta tags, Open Graph, Google
 rich results (structured data), and AMP.
