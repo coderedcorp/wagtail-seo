@@ -17,7 +17,10 @@ setup(
     include_package_data=True,
     packages=["wagtailseo"],
     python_requires=">=3.6",
-    install_requires=["wagtail>=2.0"],
+    install_requires=[
+        "beautifulsoup4",  # version pinned by wagtail
+        "wagtail>=2.0",
+    ],
     classifiers=[
         "Framework :: Django",
         "Framework :: Django :: 2.0",

@@ -10,6 +10,8 @@ from django.contrib.auth.models import User
 from wagtail.core.models import Page
 from wagtail.images.tests.utils import Image, get_test_image_file
 from wagtail.tests.utils import WagtailTestUtils
+
+from wagtailseo import amp
 from wagtailseo import schema
 from wagtailseo import utils
 from wagtailseo.blocks import MultiSelectBlock
@@ -78,7 +80,7 @@ class SeoTest(TestCase):
             struct_org_geo_lat=Decimal("1.1"),
             struct_org_geo_lng=Decimal("2.2"),
             struct_org_hours=r'[{"type": "hours", "value": {"days": ["Monday", "Tuesday", "Wednesday"], "start_time": "09:00:00", "end_time": "17:00:00"}, "id": "d6ff4389-5c26-4b78-87cc-5e108bcb692d"}]',  # noqa
-            struct_org_actions=r'[{"type": "actions", "value": {"action_type": "OrderAction", "target": "https://www.example.com/", "language": "en-US", "result_type": "FoodEstablishmentReservation", "result_name": "Custom Result", "extra_json": ""}, "id": "4ef5ddc2-a25f-4263-8516-8262340e9a7f"}]',  # noqa
+            struct_org_actions=r'[{"type": "actions", "value": {"action_type": "OrderAction", "target": "https://www.example.com/", "language": "en-US", "result_type": "FoodEstablishmentReservation", "result_name": "Custom Result", "extra_json": "{\"extra\": \"here\"}"}, "id": "4ef5ddc2-a25f-4263-8516-8262340e9a7f"}]',  # noqa
             struct_org_extra_json=r'{"json": true, "array": ["thing1", "thing2"]}',
             content_type=cls.get_content_type("seopage"),
         )
@@ -311,6 +313,13 @@ class SeoTest(TestCase):
             response.content.decode("utf8"),
         )
 
+    def test_amp(self):
+        self.assertTrue(self.page_article.seo_amp_url)
+        response = self.client.get(self.page_article.seo_amp_url)
+        self.assertEqual(response.status_code, 200)
+        print(response.content.decode("utf8"))
+        self.assertIn("<html amp>", response.content.decode("utf8"))
+
     @override_settings(WAGTAILSEO_SEP="|")
     def test_custom_sep(self):
         page = self.page_lowseo
@@ -354,3 +363,57 @@ class TestMultiSelectBlock(TestCase):
         self.assertInHTML('<option value="tea" selected>Tea</option>', html)
         self.assertInHTML('<option value="coffee" selected>Coffee</option>', html)
         self.assertTrue(html.count("selected"), 2)
+
+
+class TestAmpConversion(TestCase):
+    """
+    Test case for AMP tag conversions.
+    """
+
+    def test_img(self):
+        """
+        Test img tags are converted to amp-img tags.
+        """
+        out = amp.convert_to_amp(
+            """
+            <img src="/source.jpg" />
+            <img src="/source2.jpg" />
+            """
+        )
+        self.assertHTMLEqual(
+            out,
+            """
+            <amp-img src="/source.jpg"></amp-img>
+            <amp-img src="/source2.jpg"></amp-img>
+            """,
+        )
+
+    def test_iframe(self):
+        """
+        Test iframe tags are converted to amp-iframe tags.
+        """
+        out = amp.convert_to_amp(
+            """
+            <iframe src="/source.html"></iframe>
+            <iframe src="/source-2.html"></iframe>
+            """
+        )
+        print(out)
+        self.assertHTMLEqual(
+            out,
+            """
+            <amp-iframe layout="responsive" src="/source.html"></amp-iframe>
+            <amp-iframe layout="responsive" src="/source-2.html"></amp-iframe>
+            """,
+        )
+
+    def test_untouched(self):
+        """
+        Converter should pass the HTML through.
+        """
+        html_untouched = """
+            <h1>Heading</h1>
+            <p>Paragraph.</p>
+        """
+        out = amp.convert_to_amp(html_untouched, pretty=False)
+        self.assertHTMLEqual(out, html_untouched)

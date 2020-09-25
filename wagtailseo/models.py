@@ -483,6 +483,28 @@ class SeoMixin(Page):
     def seo_struct_article_json(self) -> str:
         return json.dumps(self.seo_struct_article_dict, cls=utils.StructDataEncoder)
 
+    def get_amp_template(self, request) -> Optional[str]:
+        """
+        Returns path to an AMP template, if the request should serve AMP HTML.
+        Returns None if AMP is not available or should not be served.
+        """
+        if "amp" in request.GET and hasattr(self, "amp_template"):
+            seo_settings = SeoSettings.for_request(request)
+            if seo_settings.amp_pages:
+                if request.is_ajax():
+                    return self.ajax_template or self.amp_template
+                return self.amp_template
+        return None
+
+    def get_template(self, request, *args, **kwargs):
+        """
+        Overrides parent to serve different templates based on querystring.
+        """
+        amp = self.get_amp_template(request)
+        if amp:
+            return amp
+        return super().get_template(request, *args, **kwargs)
+
     seo_meta_panels = [
         MultiFieldPanel(
             [

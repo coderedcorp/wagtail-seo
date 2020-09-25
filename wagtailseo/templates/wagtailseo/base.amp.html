@@ -1,0 +1,32 @@
+<!doctype html>
+<html amp>
+  <head>
+    {# AMP boilerplate #}
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+    <script async src="https://cdn.ampproject.org/v0.js"></script>
+    <style amp-boilerplate>body{-webkit-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-moz-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-ms-animation:-amp-start 8s steps(1,end) 0s 1 normal both;animation:-amp-start 8s steps(1,end) 0s 1 normal both}@-webkit-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-moz-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-ms-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-o-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}</style><noscript><style amp-boilerplate>body{-webkit-animation:none;-moz-animation:none;-ms-animation:none;animation:none}</style></noscript>
+
+    {# Meta #}
+    <title>{% block title %}{{ self.seo_pagetitle }}{% endblock %}</title>
+    <link rel="canonical" href="{% block canonical %}{{ self.seo_canonical_url }}{% endblock %}">
+    {% include "wagtailseo/struct_data.html" %}
+
+    {# Load additional AMP components you may need here #}
+    {# See: https://amp.dev/documentation/components/?format=websites #}
+    {% block amp_components %}
+    <script async custom-element="amp-iframe" src="https://cdn.ampproject.org/v0/amp-iframe-0.1.js"></script>
+    {% endblock %}
+
+    {# Styles #}
+    <style amp-custom>
+      {% block amp_css %}
+      /* AMP does not allow loading custom CSS files. All CSS must be defined here! */
+      {% endblock %}
+    </style>
+
+  </head>
+  <body>
+    {% block amp_body %}{% endblock %}
+  </body>
+</html>

@@ -27,6 +27,7 @@ class ArticlePage(SeoMixin, Page):
     """
 
     template = "home/page.html"
+    amp_template = "wagtailseo/article.amp.html"
 
     seo_content_type = SeoType.ARTICLE
     seo_twitter_card = TwitterCard.LARGE

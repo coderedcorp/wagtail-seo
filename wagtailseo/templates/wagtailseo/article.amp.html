@@ -1,0 +1,18 @@
+{% extends "wagtailseo/base.amp.html" %}
+{% load wagtailimages_tags %}
+
+{% block amp_body %}
+<article>
+  {% if self.seo_image %}
+  {% image self.seo_image fill-2000x1000 as image %}
+  <amp-img src="{{image.url}}" width="{{image.width}}" height="{{image.height}}" layout="responsive"></amp-img>
+  {% endif %}
+
+  <h1>{{ self.title }}</h1>
+  <p>
+    {{self.seo_author}} ● {{ self.seo_published_at }}
+  </p>
+  <hr>
+  {% block amp_article_body %}{% endblock %}
+</article>
+{% endblock %}
