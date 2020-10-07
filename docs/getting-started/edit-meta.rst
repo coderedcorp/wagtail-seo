@@ -37,6 +37,8 @@ Search & Social Media Previews
 * **Search description** --- This will show up in search engine results and
   social media previews.
 
+* **Canonical URL** --- The preferred URL for duplicate or similar pages.
+
 * **Preview image** --- This corresponds to the Open Graph image and will
   show up in social media previews (Facebook, LinkedIn, Twitter, and many other
   sites supporting the Open Graph standard).
