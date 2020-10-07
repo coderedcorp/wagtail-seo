@@ -53,22 +53,24 @@ html_theme = "library"
 
 html_sidebars = {
     "**": [
-        "about.html",         # Project name, description, etc.
-        "searchbox.html",     # Search.
-        "globaltoc.html",     # Global table of contents.
+        "about.html",  # Project name, description, etc.
+        "searchbox.html",  # Search.
+        "globaltoc.html",  # Global table of contents.
         "readingmodes.html",  # Light/sepia/dark color schemes.
-        "sponsors.html",      # Fancy sponsor links.
+        "sponsors.html",  # Fancy sponsor links.
     ]
 }
 
 html_theme_options = {
     "description": "Search engine and social media optimization for Wagtail.",
-    #"sponsors_heading": "Official CodeRed Project",
-    "sponsors": [{
-        "href": "https://github.com/coderedcorp/wagtail-seo",
-        "image": "https://docs.coderedcorp.com/logo-square-red-128.png",
-        "note": "This project is comercially supported by CodeRed."
-    }],
+    # "sponsors_heading": "Official CodeRed Project",
+    "sponsors": [
+        {
+            "href": "https://github.com/coderedcorp/wagtail-seo",
+            "image": "https://docs.coderedcorp.com/logo-square-red-128.png",
+            "note": "This project is comercially supported by CodeRed.",
+        }
+    ],
 }
 
 html_last_updated_fmt = ""
