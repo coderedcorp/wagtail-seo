@@ -43,6 +43,12 @@ class SeoMixin(Page):
     class Meta:
         abstract = True
 
+    canonical_url = models.URLField(
+        blank=True,
+        max_length=255,
+        verbose_name=_("Canonical URL"),
+        help_text=_("Leave blank to use the page's URL."),
+    )
     og_image = models.ForeignKey(
         get_image_model_string(),
         null=True,
@@ -174,6 +180,12 @@ class SeoMixin(Page):
         "search_description",  # Comes from wagtail.Page
     ]
 
+    # List of text attribute names on tthis model, in order of
+    # preference, for use as Canonial URL.
+    canonical_url_sources = [
+        "canonical_url",
+    ]
+
     # List of Image object attribute names on this model, in order of
     # preference, for use as the preferred Open Graph / SEO image.
     seo_image_sources = [
@@ -210,6 +222,11 @@ class SeoMixin(Page):
         Gets the full/absolute/canonical URL preferred for meta tags and search engines.
         Override in your Page model as necessary.
         """
+        for attr in self.canonical_url_sources:
+            if hasattr(self, attr):
+                url = getattr(self, attr)
+                if url:
+                    return url
         return self.get_full_url()
 
     @property
@@ -489,6 +506,7 @@ class SeoMixin(Page):
                 FieldPanel("slug"),
                 FieldPanel("seo_title"),
                 FieldPanel("search_description"),
+                FieldPanel("canonical_url"),
                 ImageChooserPanel("og_image"),
             ],
             _("Search and Social Previews"),
