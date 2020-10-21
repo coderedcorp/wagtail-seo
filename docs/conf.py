@@ -20,8 +20,6 @@ import sys
 
 import django
 
-from wagtailseo import __shortversion__
-
 
 DOCS_PATH = os.path.dirname(os.path.abspath(__file__))
 PROJECT_PATH = os.path.dirname(DOCS_PATH)
