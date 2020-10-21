@@ -14,12 +14,17 @@
 # import sys
 # sys.path.insert(0, os.path.abspath('.'))
 
-import os
 import datetime
+import os
+import sys
+
+import django
+
 from wagtailseo import __shortversion__
 
 
 DOCS_PATH = os.path.dirname(os.path.abspath(__file__))
+PROJECT_PATH = os.path.dirname(DOCS_PATH)
 
 
 # -- Project information -----------------------------------------------------
@@ -28,13 +33,18 @@ project = "wagtail-seo"
 author = "CodeRed LLC"
 copyright = f"{str(datetime.datetime.now().year)}, {author}"
 
-# The short X.Y version
-version = __shortversion__
-# The full version, including alpha/beta/rc tags
-release = __shortversion__
+
+# -- Setup Django ------------------------------------------------------------
+
+# To render autodoc, a Django project must be configure to import wagtailseo.
+sys.path.append(os.path.join(PROJECT_PATH, "testproject"))
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "testproject.settings")
+django.setup()
 
 
 # -- General configuration ---------------------------------------------------
+
+extensions = ["sphinx.ext.autodoc"]
 
 source_suffix = ".rst"
 

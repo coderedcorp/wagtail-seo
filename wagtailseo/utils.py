@@ -17,6 +17,10 @@ def serialize_date(date: Union[datetime, time]) -> str:
     """
     Serializes a datetime or time into ISO 8601 format required for Open Graph
     and Structured Data.
+
+    :param Union[datetime, time] date: The date object to serialize.
+    :rtype: str
+    :returns: String-ified date.
     """
     return date.isoformat()
 
@@ -26,7 +30,12 @@ def get_absolute_media_url(site: Site) -> str:
     Returns an absolute base URL for media files.
 
     This will normally be the site's root URL, except for when MEDIA_URL already
-    looks like a full URL.
+    looks like a full URL (e.g. if media is stored and served from S3, a CDN,
+    etc.). The return value can always be safely prefixed to an image URL.
+
+    :param Site site: The site object from which the media is served.
+    :rtype: str
+    :returns: The absolute base URL for media files of this site.
     """
     if MEDIA_IS_ABSOLUTE:
         return ""
