@@ -30,3 +30,4 @@ Contents
     Customizing <customizing/index>
     Tools <test-meta>
     Contributing <contributing>
+    Reference <reference/index>
