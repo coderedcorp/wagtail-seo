@@ -261,7 +261,10 @@ class SeoMixin(Page):
         """
         base_url = utils.get_absolute_media_url(self.get_site())
         if self.seo_image:
-            return base_url + self.seo_image.get_rendition("original").url
+            seo_image_url = self.seo_image.get_rendition("original").url
+            if not seo_image_url.startswith('http'):
+                seo_image_url = base_url + seo_image_url
+            return seo_image_url
         return ""
 
     @property
@@ -280,7 +283,10 @@ class SeoMixin(Page):
         """
         base_url = utils.get_absolute_media_url(self.get_site())
         if self.seo_logo:
-            return base_url + self.seo_logo.get_rendition("original").url
+            seo_logo_url = self.seo_logo.get_rendition("original").url
+            if not seo_logo_url.startswith('http'):
+                seo_logo_url = base_url + seo_logo_url
+            return seo_logo_url
         return ""
 
     @property
