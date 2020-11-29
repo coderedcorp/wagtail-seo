@@ -16,8 +16,8 @@ Wagtail SEO also requires the Wagtail Site Settings app and context processor.
 
     INSTALLED_APPS = [
         ...
-        "wagtail.contrib.settings",
         "wagtailseo",
+        "wagtail.contrib.settings",
         "wagtail.sites",
         ...
     ]
