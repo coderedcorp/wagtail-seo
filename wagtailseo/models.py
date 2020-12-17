@@ -259,12 +259,10 @@ class SeoMixin(Page):
         """
         Gets the absolute URL for the primary Open Graph image of this page.
         """
-        base_url = utils.get_absolute_media_url(self.get_site())
         if self.seo_image:
-            seo_image_url = self.seo_image.get_rendition("original").url
-            if not utils.PROTOCOL_RE.match(seo_image_url):
-                seo_image_url = base_url + seo_image_url
-            return seo_image_url
+            url = self.seo_image.get_rendition("original").url
+            base_url = utils.get_absolute_media_url(self.get_site())
+            return utils.ensure_absolute_url(url, base_url)
         return ""
 
     @property
@@ -281,12 +279,10 @@ class SeoMixin(Page):
         """
         Gets the absolute URL for the organization logo.
         """
-        base_url = utils.get_absolute_media_url(self.get_site())
         if self.seo_logo:
-            seo_logo_url = self.seo_logo.get_rendition("original").url
-            if not utils.PROTOCOL_RE.match(seo_logo_url):
-                seo_logo_url = base_url + seo_logo_url
-            return seo_logo_url
+            url = self.seo_logo.get_rendition("original").url
+            base_url = utils.get_absolute_media_url(self.get_site())
+            return utils.ensure_absolute_url(url, base_url)
         return ""
 
     @property
