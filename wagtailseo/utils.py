@@ -43,6 +43,12 @@ def get_absolute_media_url(site: Site) -> str:
     return site.root_url
 
 
+def ensure_absolute_url(url: str, base_url: str) -> str:
+    if not PROTOCOL_RE.match(url):
+        url = base_url + url
+    return url
+
+
 def get_struct_data_images(site: Site, image: AbstractImage) -> List[str]:
     """
     Google requires multiple different aspect ratios for certain structured
@@ -54,14 +60,15 @@ def get_struct_data_images(site: Site, image: AbstractImage) -> List[str]:
     :rtype: List[str]
     :return: A list of absolute image URLs.
     """
+
     base_url = get_absolute_media_url(site)
 
     # Use huge numbers because Wagtail will not upscale, but will max out at the
     # image's original resolution using the specified aspect ratio.
     # Google wants them high resolution.
-    img1x1 = base_url + image.get_rendition("fill-10000x10000").url
-    img4x3 = base_url + image.get_rendition("fill-40000x30000").url
-    img16x9 = base_url + image.get_rendition("fill-16000x9000").url
+    img1x1 = ensure_absolute_url(image.get_rendition("fill-10000x10000").url, base_url)
+    img4x3 = ensure_absolute_url(image.get_rendition("fill-40000x30000").url, base_url)
+    img16x9 = ensure_absolute_url(image.get_rendition("fill-16000x9000").url, base_url)
 
     return [img1x1, img4x3, img16x9]
 
