@@ -1,8 +1,7 @@
 -e ./
 
 black
-# Replace with codespell>=1.18
-https://github.com/codespell-project/codespell/archive/master.zip
+codespell>=2
 flake8
 mypy
 pytest
