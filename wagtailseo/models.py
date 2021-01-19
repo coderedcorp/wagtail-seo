@@ -214,7 +214,9 @@ class SeoMixin(Page):
         Gets the name of the author of this page.
         Override in your Page model as necessary.
         """
-        return self.owner.get_full_name()
+        if self.owner:
+            return self.owner.get_full_name()
+        return ""
 
     @property
     def seo_canonical_url(self) -> str:
