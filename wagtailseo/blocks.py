@@ -94,7 +94,7 @@ class StructuredDataActionValue(blocks.StructValue):
 
     @property
     def struct_dict(self) -> dict:
-        if self["action_type"] == "SearchActivity":
+        if self["action_type"] == "SearchAction":
             sd_dict = {
                 "@type": self["action_type"],
                 "target": self["target"],

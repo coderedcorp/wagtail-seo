@@ -171,7 +171,6 @@ SCHEMA_RESULT_CHOICES = (
     ("ReservationPackage", "ReservationPackage"),
     ("TaxiReservation", "TaxiReservation"),
     ("TrainReservation", "TrainReservation"),
-    ("SearchAction", "SearchAction")
 )
 
 SCHEMA_SEARCH_QUERY_REQUIRED = (
