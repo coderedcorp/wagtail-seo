@@ -139,6 +139,13 @@ class StructuredDataActionBlock(blocks.StructBlock):
     )
     target = blocks.URLBlock(
         verbose_name=_("Target URL"),
+        help_text=_("e.g. http://example.com/search?&q={query}")
+    )
+    query = blocks.ChoiceBlock(
+        verbose_name=_("Search query required"),
+        help_text=_("Is the search `query` required for your search engine. Optional for 'Action Type' SearchAction"),
+        required=False,
+        choices=schema.SCHEMA_SEARCH_QUERY_REQUIRED
     )
     language = blocks.CharBlock(
         verbose_name=_("Language"),
@@ -165,6 +172,6 @@ class StructuredDataActionBlock(blocks.StructBlock):
         classname="monospace",
         help_text=_(
             "Additional JSON-LD inserted into the Action dictionary. "
-            "Must be properties of https://schema.org/Action."
+            "Must be properties of https://schema.org/Action. (Don't use for Organizational Schema in root)"
         ),
     )

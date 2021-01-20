@@ -157,6 +157,7 @@ SCHEMA_ORG_CHOICES = (
 SCHEMA_ACTION_CHOICES = (
     ("OrderAction", "OrderAction"),
     ("ReserveAction", "ReserveAction"),
+    ("SearchAction", "SearchAction")
 )
 
 SCHEMA_RESULT_CHOICES = (
@@ -170,5 +171,10 @@ SCHEMA_RESULT_CHOICES = (
     ("ReservationPackage", "ReservationPackage"),
     ("TaxiReservation", "TaxiReservation"),
     ("TrainReservation", "TrainReservation"),
+    ("SearchAction", "SearchAction")
+)
+
+SCHEMA_SEARCH_QUERY_REQUIRED = (
+    ("Required", "required"),
 )
 # fmt: on
