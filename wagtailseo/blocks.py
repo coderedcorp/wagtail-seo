@@ -94,19 +94,26 @@ class StructuredDataActionValue(blocks.StructValue):
 
     @property
     def struct_dict(self) -> dict:
-        sd_dict = {
-            "@type": self["action_type"],
-            "target": {
-                "@type": "EntryPoint",
-                "urlTemplate": self["target"],
-                "inLanguage": self["language"],
-                "actionPlatform": [
-                    "http://schema.org/DesktopWebPlatform",
-                    "http://schema.org/IOSPlatform",
-                    "http://schema.org/AndroidPlatform",
-                ],
-            },
-        }
+        if self["action_type"] == "SearchActivity":
+            sd_dict = {
+                "@type": self["action_type"],
+                "target": self["target"],
+                "query": self["query"]
+            }
+        else:
+            sd_dict = {
+                "@type": self["action_type"],
+                "target": {
+                    "@type": "EntryPoint",
+                    "urlTemplate": self["target"],
+                    "inLanguage": self["language"],
+                    "actionPlatform": [
+                        "http://schema.org/DesktopWebPlatform",
+                        "http://schema.org/IOSPlatform",
+                        "http://schema.org/AndroidPlatform",
+                    ],
+                },
+            }
         if self["result_type"]:
             sd_dict.update(
                 {
@@ -143,7 +150,8 @@ class StructuredDataActionBlock(blocks.StructBlock):
     )
     query = blocks.ChoiceBlock(
         verbose_name=_("Search query required"),
-        help_text=_("Is the search `query` required for your search engine. Optional for 'Action Type' SearchAction"),
+        help_text=_("Is the search `query` parameter required for your search engine. "
+                    "Optional for 'Action Type' SearchAction"),
         required=False,
         choices=schema.SCHEMA_SEARCH_QUERY_REQUIRED
     )
@@ -158,7 +166,7 @@ class StructuredDataActionBlock(blocks.StructBlock):
     result_type = blocks.ChoiceBlock(
         required=False,
         verbose_name=_("Result Type"),
-        help_text=_("Leave blank for OrderAction"),
+        help_text=_("Leave blank for OrderAction and SearchAction"),
         choices=schema.SCHEMA_RESULT_CHOICES,
     )
     result_name = blocks.CharBlock(
