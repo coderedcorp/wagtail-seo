@@ -174,6 +174,6 @@ SCHEMA_RESULT_CHOICES = (
 )
 
 SCHEMA_SEARCH_QUERY_REQUIRED = (
-    ("Required", "required"),
+    ("required", "required"),
 )
 # fmt: on
