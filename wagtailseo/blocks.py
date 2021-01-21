@@ -181,6 +181,6 @@ class StructuredDataActionBlock(blocks.StructBlock):
         classname="monospace",
         help_text=_(
             "Additional JSON-LD inserted into the Action dictionary. "
-            "Must be properties of https://schema.org/Action. (Don't use for Organizational Schema in root)"
+            "Must be properties of https://schema.org/Action."
         ),
     )
