@@ -440,10 +440,20 @@ class SeoMixin(Page):
             sd_dict.update({"openingHoursSpecification": hours})
 
         # Actions.
+        actions = []
         if self.struct_org_actions:
-            actions = []
             for action in self.struct_org_actions:
                 actions.append(action.value.struct_dict)
+
+        # Global Actions.
+        global_settings = SeoSettings.objects.last()
+        print("global_settings.action_blocks")
+        print(global_settings.action_blocks)
+        if global_settings.action_blocks:
+            for global_action in global_settings.action_blocks:
+                actions.append(global_action.value.struct_dict)
+
+        if actions:
             sd_dict.update({"potentialAction": actions})
 
         # Extra JSON.
@@ -603,6 +613,12 @@ class SeoSettings(BaseSetting):
             "preferred by search engines. See https://amp.dev/"
         ),
     )
+    action_blocks = StreamField(
+        [("action_blocks", StructuredDataActionBlock())],
+        blank=True,
+        verbose_name=_("Actions to all pages"),
+        help_text=_("Actions added here will be applied to all pages"),
+    )
 
     @property
     def at_twitter_site(self):
@@ -620,6 +636,7 @@ class SeoSettings(BaseSetting):
                 FieldPanel("struct_meta"),
                 FieldPanel("twitter_meta"),
                 FieldPanel("twitter_site"),
+                StreamFieldPanel("action_blocks")
             ],
             heading=_("Search Engine Optimization"),
         )
