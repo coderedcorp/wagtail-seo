@@ -636,7 +636,7 @@ class SeoSettings(BaseSetting):
                 FieldPanel("struct_meta"),
                 FieldPanel("twitter_meta"),
                 FieldPanel("twitter_site"),
-                StreamFieldPanel("action_blocks")
+                StreamFieldPanel("action_blocks"),
             ],
             heading=_("Search Engine Optimization"),
         )

@@ -95,9 +95,10 @@ class StructuredDataActionValue(blocks.StructValue):
     @property
     def struct_dict(self) -> dict:
         if self["action_type"] == "SearchAction":
-            sd_dict = {"@type": self["action_type"],
-                       "target": self["target"],
-                       }
+            sd_dict = {
+                "@type": self["action_type"],
+                "target": self["target"],
+            }
             if self["query"]:
                 sd_dict["query"] = self["query"]
 
@@ -147,14 +148,16 @@ class StructuredDataActionBlock(blocks.StructBlock):
     )
     target = blocks.URLBlock(
         verbose_name=_("Target URL"),
-        help_text=_("e.g. http://example.com/search?&q={query}")
+        help_text=_("e.g. http://example.com/search?&q={query}"),
     )
     query = blocks.ChoiceBlock(
         verbose_name=_("Search query required"),
-        help_text=_("Is the search `query` parameter required for your search engine. "
-                    "Optional for 'Action Type' SearchAction"),
+        help_text=_(
+            "Is the search `query` parameter required for your search engine. "
+            "Optional for 'Action Type' SearchAction"
+        ),
         required=False,
-        choices=schema.SCHEMA_SEARCH_QUERY_REQUIRED
+        choices=schema.SCHEMA_SEARCH_QUERY_REQUIRED,
     )
     language = blocks.CharBlock(
         verbose_name=_("Language"),
