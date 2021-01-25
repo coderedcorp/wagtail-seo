@@ -80,7 +80,7 @@ class SeoMixin(Page):
         on_delete=models.SET_NULL,
         related_name="+",
         verbose_name=_("Organization logo"),
-        help_text=_("Leave blank to use the logo in Settings > Layout > Logo"),
+        help_text=_("Leave blank to use the logo in Settings > SEO > Logo"),
     )
     struct_org_image = models.ForeignKey(
         get_image_model_string(),
@@ -274,6 +274,10 @@ class SeoMixin(Page):
         """
         if self.struct_org_logo:
             return self.struct_org_logo
+        else:
+            global_settings = SeoSettings.objects.last()
+            if global_settings:
+                return global_settings.logo
         return None
 
     @property
@@ -286,6 +290,19 @@ class SeoMixin(Page):
             base_url = utils.get_absolute_media_url(self.get_site())
             return utils.ensure_absolute_url(url, base_url)
         return ""
+
+    @property
+    def seo_org_image(self) -> Optional[AbstractImage]:
+        """
+        Gets the primary logo of the organization.
+        """
+        if self.struct_org_image:
+            return self.struct_org_image
+        else:
+            global_settings = SeoSettings.objects.last()
+            if global_settings:
+                return global_settings.org_image
+        return None
 
     @property
     def seo_og_type(self) -> str:
@@ -374,9 +391,9 @@ class SeoMixin(Page):
             )
 
         # Image.
-        if self.struct_org_image:
+        if self.seo_org_image:
             images = utils.get_struct_data_images(
-                self.get_site(), self.struct_org_image
+                self.get_site(), self.seo_org_image
             )
             sd_dict.update({"image": images})
 
@@ -447,8 +464,6 @@ class SeoMixin(Page):
 
         # Global Actions.
         global_settings = SeoSettings.objects.last()
-        print("global_settings.action_blocks")
-        print(global_settings.action_blocks)
         if global_settings.action_blocks:
             for global_action in global_settings.action_blocks:
                 actions.append(global_action.value.struct_dict)
@@ -613,6 +628,30 @@ class SeoSettings(BaseSetting):
             "preferred by search engines. See https://amp.dev/"
         ),
     )
+    logo = models.ForeignKey(
+        get_image_model_string(),
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name="+",
+        verbose_name=_("Organization logo"),
+        help_text=_("Apply this logo on all pages. "
+                    "It can be overwritten if another logo is uploaded on a specific page.")
+    )
+    org_image = models.ForeignKey(
+        get_image_model_string(),
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name="+",
+        verbose_name=_("Photo of Organization"),
+        help_text=_(
+            "A photo of the facility. This photo will be cropped to 1:1, 4:3, "
+            "and 16:9 aspect ratios automatically. "
+            "Apply this logo on all pages. "
+            "It can be overwritten if another logo is uploaded on a specific page."
+        ),
+    )
     action_blocks = StreamField(
         [("action_blocks", StructuredDataActionBlock())],
         blank=True,
@@ -636,6 +675,8 @@ class SeoSettings(BaseSetting):
                 FieldPanel("struct_meta"),
                 FieldPanel("twitter_meta"),
                 FieldPanel("twitter_site"),
+                ImageChooserPanel("logo"),
+                ImageChooserPanel("org_image"),
                 StreamFieldPanel("action_blocks"),
             ],
             heading=_("Search Engine Optimization"),
