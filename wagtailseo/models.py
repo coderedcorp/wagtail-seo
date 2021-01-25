@@ -392,9 +392,7 @@ class SeoMixin(Page):
 
         # Image.
         if self.seo_org_image:
-            images = utils.get_struct_data_images(
-                self.get_site(), self.seo_org_image
-            )
+            images = utils.get_struct_data_images(self.get_site(), self.seo_org_image)
             sd_dict.update({"image": images})
 
         # Telephone.
@@ -635,8 +633,10 @@ class SeoSettings(BaseSetting):
         on_delete=models.SET_NULL,
         related_name="+",
         verbose_name=_("Organization logo"),
-        help_text=_("Apply this logo on all pages. "
-                    "It can be overwritten if another logo is uploaded on a specific page.")
+        help_text=_(
+            "Apply this logo on all pages. "
+            "It can be overwritten if another logo is uploaded on a specific page."
+        ),
     )
     org_image = models.ForeignKey(
         get_image_model_string(),
