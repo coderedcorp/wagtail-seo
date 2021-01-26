@@ -153,10 +153,10 @@ SCHEMA_ORG_CHOICES = (
     ("TheaterGroup", "Organization > PerformingGroup > TheaterGroup"),
     ("SportsOrganization", "Organization > SportsOrganization"),
     ("SportsTeam", "Organization > SportsOrganization > SportsTeam"),
-    ("JobPosting","Thing > Intangible > JobPosting"),
     ("Article", "Thing > CreativeWork > Article"),
     ("NewsArticle", " Thing > CreativeWork > Article > NewsArticle "),
     ("VideoObject", " Thing > CreativeWork > MediaObject > VideoObject "),
+    ("JobPosting", "Thing > Intangible > JobPosting"),
 )
 
 SCHEMA_ACTION_CHOICES = (
