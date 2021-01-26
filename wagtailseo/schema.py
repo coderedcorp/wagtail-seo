@@ -8,6 +8,7 @@ SCHEMA_HELP = (
 # fmt: off
 SCHEMA_ORG_CHOICES = (
     ("Organization", "Organization"),
+    ("Type", "Generic -> Type"),
     ("Airline", "Organization > Airline"),
     ("Corporation", "Organization > Corporation"),
     ("EducationalOrganization", "Organization > EducationalOrganization"),
@@ -152,6 +153,10 @@ SCHEMA_ORG_CHOICES = (
     ("TheaterGroup", "Organization > PerformingGroup > TheaterGroup"),
     ("SportsOrganization", "Organization > SportsOrganization"),
     ("SportsTeam", "Organization > SportsOrganization > SportsTeam"),
+    ("JobPosting","Thing > Intangible > JobPosting"),
+    ("Article", "Thing > CreativeWork > Article"),
+    ("NewsArticle", " Thing > CreativeWork > Article > NewsArticle "),
+    ("VideoObject", " Thing > CreativeWork > MediaObject > VideoObject "),
 )
 
 SCHEMA_ACTION_CHOICES = (
