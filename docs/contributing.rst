@@ -35,7 +35,14 @@ To set up your development environment:
 
 #. Write some code.
 
-#. Next, run the static analysis tools::
+#. Next, run the static analysis tools either with the script or manually
+
+* With the script::
+
+       ./scripts/run_tests
+
+
+* Manually::
 
        black .
        codespell .
