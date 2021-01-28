@@ -66,6 +66,13 @@ class SeoMixin(Page):
         verbose_name=_("Organization type"),
         help_text=_("If blank, no structured data will be used on this page."),
     )
+    breadcrumbs_are_active = models.BooleanField(
+        default=True,
+        verbose_name=_("Breadcrumbs are active"),
+        help_text=_("If enabled, the breadcrumb object will be added as: "
+                    "https://example.org/{slug}/#breadcrumb . "
+                    "Also BreadCrumbList object will be added with the parent pages.")
+    )
     struct_org_name = models.CharField(
         default="",
         blank=True,
@@ -372,36 +379,38 @@ class SeoMixin(Page):
         """
 
         # Base info.
+        main_info = {
+                "@type": "Organization",
+                "url": self.seo_canonical_url,
+                "name": self.seo_struct_org_name,
+            }
         sd_dict: dict = {
             "@context": "http://schema.org",
-            "@type": "Organization",
-            "url": self.seo_canonical_url,
-            "name": self.seo_struct_org_name,
+            "@graph": [main_info],
         }
+
 
         # Logo.
         if self.seo_logo:
-            sd_dict.update(
-                {
-                    "logo": {
-                        "@type": "ImageObject",
-                        "url": self.seo_logo_url,
-                    },
+            main_info.update({
+                "logo": {
+                    "@type": "ImageObject",
+                    "url": self.seo_logo_url,
                 }
-            )
+            })
 
         # Image.
         if self.seo_org_image:
             images = utils.get_struct_data_images(self.get_site(), self.seo_org_image)
-            sd_dict.update({"image": images})
+            main_info.update({"image": images})
 
         # Telephone.
         if self.struct_org_phone:
-            sd_dict.update({"telephone": self.struct_org_phone})
+            main_info.update({"telephone": self.struct_org_phone})
 
         # Address.
         if self.struct_org_address_street:
-            sd_dict.update(
+            main_info.update(
                 {
                     "address": {
                         "@type": "PostalAddress",
@@ -433,16 +442,51 @@ class SeoMixin(Page):
 
         # Override org type to use specific type.
         if self.struct_org_type:
-            sd_dict.update({"@type": self.struct_org_type})
+            sd_dict.get("@graph")[0].update({"@type": self.struct_org_type})
+
+        # BreadcrumbsList
+        if self.breadcrumbs_are_active:
+            ancestors = self.get_ancestors()
+            breadcrumbs_list = []
+            if ancestors:
+                for i in range(len(ancestors)):
+
+                    page_type = "WebPage"
+                    try:
+                        page_type = ancestors[i].seopage.struct_org_type
+                    except:
+                        pass
+
+                    # TODO then also add the one for the page itself
+                    breadcrumbs_list.append(
+                        {
+                            "@type": "ListItem",
+                            "position": i+1,
+                            "item":
+                                {
+                                    "@type": page_type,
+                                    "@id": ancestors[i].get_full_url(),
+                                    "url": ancestors[i].get_full_url(),
+                                    "name": ancestors[i].title,
+                                }
+                        })
+
+            sd_dict.get("@graph").append(
+                {
+                    "@type": "BreadcrumbList",
+                    "@id": self.get_full_url() + "#breadcrumb",
+                    "itemListElement": breadcrumbs_list
+                })
+
 
         # Geo coordinates.
         if self.struct_org_geo_lat and self.struct_org_geo_lng:
-            sd_dict.update(
+            sd_dict.get("@graph").append(
                 {
                     "geo": {
                         "@type": "GeoCoordinates",
-                        "latitude": float(self.struct_org_geo_lat),
-                        "longitude": float(self.struct_org_geo_lng),
+                        "latitude": str(self.struct_org_geo_lat),
+                        "longitude": str(self.struct_org_geo_lng),
                     },
                 }
             )
@@ -452,7 +496,7 @@ class SeoMixin(Page):
             hours = []
             for spec in self.struct_org_hours:
                 hours.append(spec.value.struct_dict)
-            sd_dict.update({"openingHoursSpecification": hours})
+            sd_dict.get("@graph").append({"openingHoursSpecification": hours})
 
         # Actions.
         actions = []
@@ -467,11 +511,11 @@ class SeoMixin(Page):
                 actions.append(global_action.value.struct_dict)
 
         if actions:
-            sd_dict.update({"potentialAction": actions})
+            sd_dict.get("@graph").append({"potentialAction": actions})
 
         # Extra JSON.
         if self.struct_org_extra_json:
-            sd_dict.update(json.loads(self.struct_org_extra_json))
+            sd_dict.get("@graph").append(json.loads(self.struct_org_extra_json))
 
         return sd_dict
 
@@ -513,13 +557,13 @@ class SeoMixin(Page):
 
         # Image, if available.
         if self.seo_image:
-            sd_dict.update(
+            sd_dict.get("@graph").append(
                 {"image": utils.get_struct_data_images(self.get_site(), self.seo_image)}
             )
 
         # Publisher, if available.
         if self.seo_struct_publisher_dict:
-            sd_dict.update({"publisher": self.seo_struct_publisher_dict})
+            sd_dict.get("@graph").append({"publisher": self.seo_struct_publisher_dict})
 
         return sd_dict
 
@@ -557,6 +601,7 @@ class SeoMixin(Page):
                     content=_(schema.SCHEMA_HELP),
                 ),
                 FieldPanel("struct_org_type"),
+                FieldPanel("breadcrumbs_are_active"),
                 FieldPanel("struct_org_name"),
                 ImageChooserPanel("struct_org_logo"),
                 ImageChooserPanel("struct_org_image"),
