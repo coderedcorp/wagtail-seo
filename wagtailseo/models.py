@@ -492,7 +492,7 @@ class SeoMixin(Page):
                         try:
                             page_type = ancestors[i].seopage.struct_org_type
                         except Exception as e:
-                            print("Error with page's ancestors: {}".format(e))
+                            pass
 
                         breadcrumbs_list.append(
                             {
