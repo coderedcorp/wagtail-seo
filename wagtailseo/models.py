@@ -1,7 +1,7 @@
 import json
 from datetime import datetime
 from enum import Enum
-from typing import Optional
+from typing import Optional, List
 
 from django.db import models
 from django.utils.translation import gettext_lazy as _
@@ -69,9 +69,11 @@ class SeoMixin(Page):
     breadcrumbs_are_active = models.BooleanField(
         default=True,
         verbose_name=_("Breadcrumbs are active"),
-        help_text=_("If enabled, the breadcrumb object will be added as: "
-                    "https://example.org/{slug}/#breadcrumb . "
-                    "Also BreadCrumbList object will be added with the parent pages.")
+        help_text=_(
+            "If enabled, the breadcrumb object will be added as: "
+            "https://example.org/{slug}/#breadcrumb . "
+            "Also BreadCrumbList object will be added with the parent pages."
+        ),
     )
     struct_org_name = models.CharField(
         default="",
@@ -379,25 +381,22 @@ class SeoMixin(Page):
         """
 
         # Base info.
-        main_info = {
-                "@type": "Organization",
-                "url": self.seo_canonical_url,
-                "name": self.seo_struct_org_name,
-            }
-        sd_dict: dict = {
-            "@context": "http://schema.org",
-            "@graph": [main_info],
+        main_info: dict = {
+            "@type": "Organization",
+            "url": self.seo_canonical_url,
+            "name": self.seo_struct_org_name,
         }
-
 
         # Logo.
         if self.seo_logo:
-            main_info.update({
-                "logo": {
-                    "@type": "ImageObject",
-                    "url": self.seo_logo_url,
+            main_info.update(
+                {
+                    "logo": {
+                        "@type": "ImageObject",
+                        "url": self.seo_logo_url,
+                    }
                 }
-            })
+            )
 
         # Image.
         if self.seo_org_image:
@@ -423,7 +422,7 @@ class SeoMixin(Page):
                 }
             )
 
-        return sd_dict
+        return main_info
 
     @property
     def seo_struct_org_base_json(self) -> str:
@@ -436,52 +435,16 @@ class SeoMixin(Page):
 
         See: https://developers.google.com/search/docs/data-types/local-business
         """
-
         # Base info.
-        sd_dict = self.seo_struct_org_base_dict
+        main_info = self.seo_struct_org_base_dict
 
         # Override org type to use specific type.
         if self.struct_org_type:
-            sd_dict.get("@graph")[0].update({"@type": self.struct_org_type})
-
-        # BreadcrumbsList
-        if self.breadcrumbs_are_active:
-            ancestors = self.get_ancestors()
-            breadcrumbs_list = []
-            if ancestors:
-                for i in range(len(ancestors)):
-
-                    page_type = "WebPage"
-                    try:
-                        page_type = ancestors[i].seopage.struct_org_type
-                    except:
-                        pass
-
-                    # TODO then also add the one for the page itself
-                    breadcrumbs_list.append(
-                        {
-                            "@type": "ListItem",
-                            "position": i+1,
-                            "item":
-                                {
-                                    "@type": page_type,
-                                    "@id": ancestors[i].get_full_url(),
-                                    "url": ancestors[i].get_full_url(),
-                                    "name": ancestors[i].title,
-                                }
-                        })
-
-            sd_dict.get("@graph").append(
-                {
-                    "@type": "BreadcrumbList",
-                    "@id": self.get_full_url() + "#breadcrumb",
-                    "itemListElement": breadcrumbs_list
-                })
-
+            main_info.update({"@type": self.struct_org_type})
 
         # Geo coordinates.
         if self.struct_org_geo_lat and self.struct_org_geo_lng:
-            sd_dict.get("@graph").append(
+            main_info.update(
                 {
                     "geo": {
                         "@type": "GeoCoordinates",
@@ -496,10 +459,10 @@ class SeoMixin(Page):
             hours = []
             for spec in self.struct_org_hours:
                 hours.append(spec.value.struct_dict)
-            sd_dict.get("@graph").append({"openingHoursSpecification": hours})
+            main_info.update({"openingHoursSpecification": hours})
 
         # Actions.
-        actions = []
+        actions: List[dict] = []
         if self.struct_org_actions:
             for action in self.struct_org_actions:
                 actions.append(action.value.struct_dict)
@@ -511,11 +474,63 @@ class SeoMixin(Page):
                 actions.append(global_action.value.struct_dict)
 
         if actions:
-            sd_dict.get("@graph").append({"potentialAction": actions})
+            main_info.update({"potentialAction": actions})
+
+        sd_dict: dict = {
+            "@context": "http://schema.org",
+            "@graph": [main_info],
+        }
+
+        # If Breadcrumb checkobx is active
+        if self.breadcrumbs_are_active:
+            breadcrumbs_list = []
+            ancestors = self.get_ancestors()
+            if ancestors:
+                for i in range(len(ancestors)):
+                    if i > 0:  # Skip root page
+                        page_type = "WebPage"
+                        try:
+                            page_type = ancestors[i].seopage.struct_org_type
+                        except Exception as e:
+                            print("Error with page's ancestors: {}".format(e))
+
+                        breadcrumbs_list.append(
+                            {
+                                "@type": "ListItem",
+                                "position": i,
+                                "item": {
+                                    "@type": page_type,
+                                    "@id": ancestors[i].get_full_url(),
+                                    "url": ancestors[i].get_full_url(),
+                                    "name": ancestors[i].title,
+                                },
+                            }
+                        )
+
+            # Then also add the one for the page itself
+            breadcrumbs_list.append(
+                {
+                    "@type": "ListItem",
+                    "position": len(ancestors),
+                    "item": {
+                        "@type": self.struct_org_type,
+                        "@id": self.get_full_url(),
+                        "url": self.get_full_url(),
+                        "name": self.title,
+                    },
+                }
+            )
+
+            breadcrumbs_list_object = {
+                "@type": "BreadcrumbList",
+                "@id": self.get_full_url() + "#breadcrumb",
+                "itemListElement": breadcrumbs_list,
+            }
+            sd_dict.get("@graph", []).append(breadcrumbs_list_object)
 
         # Extra JSON.
         if self.struct_org_extra_json:
-            sd_dict.get("@graph").append(json.loads(self.struct_org_extra_json))
+            sd_dict.get("@graph", []).append(json.loads(self.struct_org_extra_json))
 
         return sd_dict
 
@@ -557,13 +572,13 @@ class SeoMixin(Page):
 
         # Image, if available.
         if self.seo_image:
-            sd_dict.get("@graph").append(
+            sd_dict.update(
                 {"image": utils.get_struct_data_images(self.get_site(), self.seo_image)}
             )
 
         # Publisher, if available.
         if self.seo_struct_publisher_dict:
-            sd_dict.get("@graph").append({"publisher": self.seo_struct_publisher_dict})
+            sd_dict.update({"publisher": self.seo_struct_publisher_dict})
 
         return sd_dict
 
