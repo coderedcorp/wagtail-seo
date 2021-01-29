@@ -481,7 +481,7 @@ class SeoMixin(Page):
             "@graph": [main_info],
         }
 
-        # If Breadcrumb checkobx is active
+        # If Breadcrumb checkbox is active
         if self.breadcrumbs_are_active:
             breadcrumbs_list = []
             ancestors = self.get_ancestors()
