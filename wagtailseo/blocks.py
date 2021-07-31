@@ -9,32 +9,6 @@ from wagtail.core import blocks
 from wagtailseo import schema
 
 
-class MultiSelectBlock(blocks.FieldBlock):
-    """
-    Renders as MultipleChoiceField, used for adding checkboxes,
-    radios, or multiselect inputs in the streamfield.
-    """
-
-    def __init__(
-        self,
-        required: bool = True,
-        help_text: str = None,
-        choices: List[Tuple[str, str]] = None,
-        widget=None,
-        **kwargs,
-    ):
-        self.field = forms.MultipleChoiceField(
-            required=required,
-            help_text=help_text,
-            choices=choices,
-            widget=widget,
-        )
-        super().__init__(**kwargs)
-
-    def get_searchable_content(self, value):
-        return [force_str(value)]
-
-
 class OpenHoursValue(blocks.StructValue):
     """
     Renders OpenHours in Structured Data format.
@@ -62,7 +36,7 @@ class OpenHoursBlock(blocks.StructBlock):
         label = _("Open Hours")
         value_class = OpenHoursValue
 
-    days = MultiSelectBlock(
+    days = blocks.MultipleChoiceBlock(
         required=True,
         verbose_name=_("Days"),
         help_text=_(
