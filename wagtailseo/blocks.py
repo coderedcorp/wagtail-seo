@@ -1,8 +1,6 @@
 import json
-from typing import List, Tuple
 
 from django import forms
-from django.utils.encoding import force_str
 from django.utils.translation import gettext_lazy as _
 from wagtail.core import blocks
 
