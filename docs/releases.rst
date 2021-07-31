@@ -1,6 +1,11 @@
 Release Notes
 =============
 
+0.0.4
+-----
+
+*  Fix for longitude and latitude with longer digits. Now allowing longitude with 3 digits before the decimal point (e.g. +/- 100.12345)
+
 0.0.3
 -----
 

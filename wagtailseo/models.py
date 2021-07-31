@@ -140,14 +140,14 @@ class SeoMixin(Page):
     struct_org_geo_lat = models.DecimalField(
         blank=True,
         null=True,
-        max_digits=10,
+        max_digits=11,
         decimal_places=8,
         verbose_name=_("Geographic latitude"),
     )
     struct_org_geo_lng = models.DecimalField(
         blank=True,
         null=True,
-        max_digits=10,
+        max_digits=11,
         decimal_places=8,
         verbose_name=_("Geographic longitude"),
     )
