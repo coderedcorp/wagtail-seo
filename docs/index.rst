@@ -3,7 +3,7 @@ Wagtail SEO Documentation
 
 Instantly enable optimized search result and social media previews for your
 Wagtail site. Wagtail SEO provides support for: meta tags, Open Graph, Google
-rich results (structured data), and AMP.
+rich results (structured data), and Twitter cards.
 
 `GitHub <https://github.com/coderedcorp/wagtail-seo>`_ |
 `PyPI <https://pypi.org/project/wagtail-seo/>`_

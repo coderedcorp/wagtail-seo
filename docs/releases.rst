@@ -17,6 +17,8 @@ Release Notes
 
 * Requires Wagtail>=2.9
 
+* Remove settings and references to AMP pages.
+
 
 0.0.3
 -----
