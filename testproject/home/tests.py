@@ -12,7 +12,6 @@ from wagtail.images.tests.utils import Image, get_test_image_file
 from wagtail.tests.utils import WagtailTestUtils
 from wagtailseo import schema
 from wagtailseo import utils
-from wagtailseo.blocks import MultiSelectBlock
 from wagtailseo.models import SeoSettings
 
 from home.models import ArticlePage, SeoPage, WagtailPage
@@ -335,22 +334,3 @@ class TestSettingMenu(WagtailTestUtils, TestCase):
             response,
             reverse("wagtailsettings:edit", args=("wagtailseo", "seosettings")),
         )
-
-
-class TestMultiSelectBlock(TestCase):
-    def test_render_single_choice(self):
-        block = MultiSelectBlock(
-            choices=[("tea", "Tea"), ("coffee", "Coffee"), ("water", "Water")]
-        )
-        html = block.render_form(["tea"])
-        self.assertInHTML('<option value="tea" selected>Tea</option>', html)
-        self.assertTrue(html.count("selected"), 1)
-
-    def test_render_multi_choice(self):
-        block = MultiSelectBlock(
-            choices=[("tea", "Tea"), ("coffee", "Coffee"), ("water", "Water")]
-        )
-        html = block.render_form(["coffee", "tea"])
-        self.assertInHTML('<option value="tea" selected>Tea</option>', html)
-        self.assertInHTML('<option value="coffee" selected>Coffee</option>', html)
-        self.assertTrue(html.count("selected"), 2)

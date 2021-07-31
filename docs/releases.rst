@@ -4,13 +4,25 @@ Release Notes
 0.0.4
 -----
 
-*  Fix for longitude and latitude with longer digits. Now allowing longitude with 3 digits before the decimal point (e.g. +/- 100.12345)
+* Fix for longitude and latitude with longer digits. Now allowing longitude
+  with 3 digits before the decimal point (e.g. +/- 100.12345).
+
+* Replace ``wagtailseo.blocks.MultiSelectBlock`` with Wagtail's built-in
+  ``wagtail.core.blocks.MultipleChoiceBlock``.
+
+  .. note::
+
+     You may need to make a corresponding find/replace update in your old
+     migrations in order for them to continue working.
+
+* Requires Wagtail>=2.9
+
 
 0.0.3
 -----
 
 * Added ``canonical_url`` field to ``SeoMixin``. Uses this as the page's
-  canonical URL if it is non-blank, otherwises uses the page's normal URL.
+  canonical URL if it is non-blank, otherwise uses the page's normal URL.
 
 * Fix image URLs when media is hosted on external CDN.
 

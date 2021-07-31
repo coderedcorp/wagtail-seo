@@ -16,7 +16,7 @@ This package was originally part of `coderedcms
 <https://github.com/coderedcorp/coderedcms>`_ and is in use successfully on many
 live production sites.
 
-Requires Wagtail >= 2.0
+Requires Wagtail >= 2.9
 
 
 Contents
