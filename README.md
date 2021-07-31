@@ -3,8 +3,6 @@ Wagtail SEO
 
 Search engine and social media optimization for Wagtail.
 
-(Work in progress - currently in ALPHA status)
-
 [Source code on GitHub](https://github.com/coderedcorp/wagtail-seo) |
 [Documentation](https://docs.coderedcorp.com/wagtail-seo/) |
 [PyPI](https://pypi.org/project/wagtail-seo/)
