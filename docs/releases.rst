@@ -1,6 +1,15 @@
 Release Notes
 =============
 
+
+1.0.0
+-----
+
+* Set ``default_auto_field`` in ``wagtailseo`` app.
+
+* Designate 1.0.0 version as stable.
+
+
 0.0.4
 -----
 
