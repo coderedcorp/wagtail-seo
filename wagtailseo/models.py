@@ -473,8 +473,8 @@ class SeoMixin(Page):
             },
             "headline": self.title,
             "description": self.seo_description,
-            "datePublished": self.seo_published_at,
-            "dateModified": self.last_published_at,
+            "datePublished": utils.serialize_date(self.seo_published_at),
+            "dateModified": utils.serialize_date(self.last_published_at),
             "author": {
                 "@type": "Person",
                 "name": self.seo_author,
