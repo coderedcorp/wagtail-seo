@@ -671,14 +671,6 @@ class SeoSettings(BaseSetting):
             "See https://schema.org/"
         ),
     )
-    amp_pages = models.BooleanField(
-        default=True,
-        verbose_name=_("Use AMP Pages"),
-        help_text=_(
-            "Generates an alternate AMP version of article pages that are "
-            "preferred by search engines. See https://amp.dev/"
-        ),
-    )
     logo = models.ForeignKey(
         get_image_model_string(),
         null=True,
