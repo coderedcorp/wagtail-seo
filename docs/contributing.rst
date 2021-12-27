@@ -35,14 +35,21 @@ To set up your development environment:
 
 #. Write some code.
 
-#. Next, run the static analysis tools::
+#. Next, run the static analysis tools either with the script or manually
+
+* With the script::
+
+       ./scripts/run_tests.sh
+
+
+* Manually::
 
        black .
        codespell .
        flake8 .
        mypy ./wagtailseo/
 
-#. Next, run the units tests. A simple Wagtail project using Wagtail SEO is
+Next, run the units tests. A simple Wagtail project using Wagtail SEO is
    in the ``testproject/`` directory. The tests will also generate a code
    coverage report at ``htmlcov/index.html``, which you can open in your browser::
 
