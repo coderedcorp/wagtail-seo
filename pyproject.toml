@@ -1,9 +1,11 @@
 [tool.black]
 line-length = 88
-target-version = ['py36', 'py37', 'py38']
+target-version = ['py36', 'py37', 'py38', 'py39']
 # Regular expression of files to exclude.
 exclude = '''
 /(
-    migrations
+    | migrations
+    | \.venv
+    | venv
 )/
 '''

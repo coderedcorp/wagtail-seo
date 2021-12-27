@@ -12,7 +12,6 @@ from wagtail.images.tests.utils import Image, get_test_image_file
 from wagtail.tests.utils import WagtailTestUtils
 from wagtailseo import schema
 from wagtailseo import utils
-from wagtailseo.blocks import MultiSelectBlock
 from wagtailseo.models import SeoSettings
 
 from home.models import ArticlePage, SeoPage, WagtailPage
@@ -114,7 +113,6 @@ class SeoTest(TestCase):
 
         # Turn on all SEO settings.
         seo_set: SeoSettings = SeoSettings.for_site(cls.page_home.get_site())
-        seo_set.amp_pages = True
         seo_set.og_meta = True
         seo_set.twitter_meta = True
         seo_set.struct_meta = True
@@ -163,7 +161,6 @@ class SeoTest(TestCase):
                 <meta name="twitter:title" content="{ page.seo_pagetitle }">
                 <meta name="twitter:image" content="{ page.seo_image_url }">
                 <meta name="twitter:site" content="{ seo_set.at_twitter_site }" />
-                <link rel="amphtml" href="{ page.seo_amp_url }">
                 </head>
                 """,
                 response.content.decode("utf8"),
@@ -199,7 +196,6 @@ class SeoTest(TestCase):
             <meta name="twitter:title" content="{ page.seo_pagetitle }">
             <meta name="twitter:image" content="{ page.seo_image_url }">
             <meta name="twitter:site" content="{ seo_set.at_twitter_site }" />
-            <link rel="amphtml" href="{ page.seo_amp_url }">
             </head>
             """,  # noqa
             response.content.decode("utf8"),
@@ -369,22 +365,3 @@ class TestSettingMenu(WagtailTestUtils, TestCase):
             response,
             reverse("wagtailsettings:edit", args=("wagtailseo", "seosettings")),
         )
-
-
-class TestMultiSelectBlock(TestCase):
-    def test_render_single_choice(self):
-        block = MultiSelectBlock(
-            choices=[("tea", "Tea"), ("coffee", "Coffee"), ("water", "Water")]
-        )
-        html = block.render_form(["tea"])
-        self.assertInHTML('<option value="tea" selected>Tea</option>', html)
-        self.assertTrue(html.count("selected"), 1)
-
-    def test_render_multi_choice(self):
-        block = MultiSelectBlock(
-            choices=[("tea", "Tea"), ("coffee", "Coffee"), ("water", "Water")]
-        )
-        html = block.render_form(["coffee", "tea"])
-        self.assertInHTML('<option value="tea" selected>Tea</option>', html)
-        self.assertInHTML('<option value="coffee" selected>Coffee</option>', html)
-        self.assertTrue(html.count("selected"), 2)

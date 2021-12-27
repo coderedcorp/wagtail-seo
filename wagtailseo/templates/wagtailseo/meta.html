@@ -39,11 +39,3 @@
 {% endif %}
 {% endblock %}
 {% block twitter_seo_extra %}{% endblock %}
-
-{# AMP #}
-{% block amp_seo_base %}
-{% if settings.wagtailseo.SeoSettings.amp_pages %}
-<link rel="amphtml" href="{{self.seo_amp_url}}">
-{% endif %}
-{% block amp_seo_extra %}{% endblock %}
-{% endblock %}

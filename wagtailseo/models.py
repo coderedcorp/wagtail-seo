@@ -211,13 +211,6 @@ class SeoMixin(Page):
     seo_twitter_card = TwitterCard.SUMMARY
 
     @property
-    def seo_amp_url(self) -> str:
-        """
-        Gets the full/absolute/canonical URL for the AMP version of this page.
-        """
-        return "{0}?amp".format(self.seo_canonical_url)
-
-    @property
     def seo_author(self) -> str:
         """
         Gets the name of the author of this page.
@@ -730,7 +723,6 @@ class SeoSettings(BaseSetting):
     panels = [
         MultiFieldPanel(
             [
-                FieldPanel("amp_pages"),
                 FieldPanel("og_meta"),
                 FieldPanel("struct_meta"),
                 FieldPanel("twitter_meta"),
