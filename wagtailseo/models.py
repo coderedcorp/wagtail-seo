@@ -1,7 +1,7 @@
 import json
 from datetime import datetime
 from enum import Enum
-from typing import Optional
+from typing import Optional, List
 
 from django.db import models
 from django.utils.translation import gettext_lazy as _
@@ -66,6 +66,15 @@ class SeoMixin(Page):
         verbose_name=_("Organization type"),
         help_text=_("If blank, no structured data will be used on this page."),
     )
+    breadcrumbs_are_active = models.BooleanField(
+        default=True,
+        verbose_name=_("Breadcrumbs are active"),
+        help_text=_(
+            "If enabled, the breadcrumb object will be added as: "
+            "https://example.org/{slug}/#breadcrumb . "
+            "Also BreadCrumbList object will be added with the parent pages."
+        ),
+    )
     struct_org_name = models.CharField(
         default="",
         blank=True,
@@ -80,7 +89,7 @@ class SeoMixin(Page):
         on_delete=models.SET_NULL,
         related_name="+",
         verbose_name=_("Organization logo"),
-        help_text=_("Leave blank to use the logo in Settings > Layout > Logo"),
+        help_text=_("Leave blank to use the logo in Settings > SEO > Logo"),
     )
     struct_org_image = models.ForeignKey(
         get_image_model_string(),
@@ -267,6 +276,10 @@ class SeoMixin(Page):
         """
         if self.struct_org_logo:
             return self.struct_org_logo
+        # else:
+        #     global_settings = SeoSettings.objects.last()
+        #     if global_settings and global_settings.logo:
+        #         return global_settings.logo
         return None
 
     @property
@@ -279,6 +292,19 @@ class SeoMixin(Page):
             base_url = utils.get_absolute_media_url(self.get_site())
             return utils.ensure_absolute_url(url, base_url)
         return ""
+
+    @property
+    def seo_org_image(self) -> Optional[AbstractImage]:
+        """
+        Gets the primary logo of the organization.
+        """
+        if self.struct_org_image:
+            return self.struct_org_image
+        # else:
+        #     global_settings = SeoSettings.objects.last()
+        #     if global_settings and global_settings.org_image:
+        #         return global_settings.org_image
+        return None
 
     @property
     def seo_og_type(self) -> str:
@@ -348,8 +374,7 @@ class SeoMixin(Page):
         """
 
         # Base info.
-        sd_dict: dict = {
-            "@context": "http://schema.org",
+        main_info: dict = {
             "@type": "Organization",
             "url": self.seo_canonical_url,
             "name": self.seo_struct_org_name,
@@ -357,29 +382,27 @@ class SeoMixin(Page):
 
         # Logo.
         if self.seo_logo:
-            sd_dict.update(
+            main_info.update(
                 {
                     "logo": {
                         "@type": "ImageObject",
                         "url": self.seo_logo_url,
-                    },
+                    }
                 }
             )
 
         # Image.
-        if self.struct_org_image:
-            images = utils.get_struct_data_images(
-                self.get_site(), self.struct_org_image
-            )
-            sd_dict.update({"image": images})
+        if self.seo_org_image:
+            images = utils.get_struct_data_images(self.get_site(), self.seo_org_image)
+            main_info.update({"image": images})
 
         # Telephone.
         if self.struct_org_phone:
-            sd_dict.update({"telephone": self.struct_org_phone})
+            main_info.update({"telephone": self.struct_org_phone})
 
         # Address.
         if self.struct_org_address_street:
-            sd_dict.update(
+            main_info.update(
                 {
                     "address": {
                         "@type": "PostalAddress",
@@ -392,7 +415,7 @@ class SeoMixin(Page):
                 }
             )
 
-        return sd_dict
+        return main_info
 
     @property
     def seo_struct_org_base_json(self) -> str:
@@ -405,22 +428,21 @@ class SeoMixin(Page):
 
         See: https://developers.google.com/search/docs/data-types/local-business
         """
-
         # Base info.
-        sd_dict = self.seo_struct_org_base_dict
+        main_info = self.seo_struct_org_base_dict
 
         # Override org type to use specific type.
         if self.struct_org_type:
-            sd_dict.update({"@type": self.struct_org_type})
+            main_info.update({"@type": self.struct_org_type})
 
         # Geo coordinates.
         if self.struct_org_geo_lat and self.struct_org_geo_lng:
-            sd_dict.update(
+            main_info.update(
                 {
                     "geo": {
                         "@type": "GeoCoordinates",
-                        "latitude": float(self.struct_org_geo_lat),
-                        "longitude": float(self.struct_org_geo_lng),
+                        "latitude": str(self.struct_org_geo_lat),
+                        "longitude": str(self.struct_org_geo_lng),
                     },
                 }
             )
@@ -430,18 +452,78 @@ class SeoMixin(Page):
             hours = []
             for spec in self.struct_org_hours:
                 hours.append(spec.value.struct_dict)
-            sd_dict.update({"openingHoursSpecification": hours})
+            main_info.update({"openingHoursSpecification": hours})
 
-        # Actions.
+        # Add the Actions from the current page
+        actions: List[dict] = []
         if self.struct_org_actions:
-            actions = []
             for action in self.struct_org_actions:
                 actions.append(action.value.struct_dict)
-            sd_dict.update({"potentialAction": actions})
+
+        # Add the Global Actions
+        # global_settings = SeoSettings.objects.last()
+        # if global_settings and global_settings.action_blocks:
+        #   for global_action in global_settings.action_blocks:
+        #       actions.append(global_action.value.struct_dict)
+
+        if actions:
+            main_info.update({"potentialAction": actions})
+
+        sd_dict: dict = {
+            "@context": "http://schema.org",
+            "@graph": [main_info],
+        }
+
+        # If Breadcrumb checkbox is active
+        if self.breadcrumbs_are_active:
+            breadcrumbs_list = []
+            ancestors = self.get_ancestors()
+            if ancestors:
+                for i in range(len(ancestors)):
+                    if i > 0:  # Skip root page
+                        page_type = "WebPage"
+                        try:
+                            page_type = ancestors[i].seopage.struct_org_type
+                        except Exception:
+                            pass
+
+                        breadcrumbs_list.append(
+                            {
+                                "@type": "ListItem",
+                                "position": i,
+                                "item": {
+                                    "@type": page_type,
+                                    "@id": ancestors[i].get_full_url(),
+                                    "url": ancestors[i].get_full_url(),
+                                    "name": ancestors[i].title,
+                                },
+                            }
+                        )
+
+            # Then also add the one for the page itself
+            breadcrumbs_list.append(
+                {
+                    "@type": "ListItem",
+                    "position": len(ancestors),
+                    "item": {
+                        "@type": self.struct_org_type,
+                        "@id": self.get_full_url(),
+                        "url": self.get_full_url(),
+                        "name": self.title,
+                    },
+                }
+            )
+
+            breadcrumbs_list_object = {
+                "@type": "BreadcrumbList",
+                "@id": self.get_full_url() + "#breadcrumb",
+                "itemListElement": breadcrumbs_list,
+            }
+            sd_dict.get("@graph", []).append(breadcrumbs_list_object)
 
         # Extra JSON.
         if self.struct_org_extra_json:
-            sd_dict.update(json.loads(self.struct_org_extra_json))
+            sd_dict.get("@graph", []).append(json.loads(self.struct_org_extra_json))
 
         return sd_dict
 
@@ -527,6 +609,7 @@ class SeoMixin(Page):
                     content=_(schema.SCHEMA_HELP),
                 ),
                 FieldPanel("struct_org_type"),
+                FieldPanel("breadcrumbs_are_active"),
                 FieldPanel("struct_org_name"),
                 ImageChooserPanel("struct_org_logo"),
                 ImageChooserPanel("struct_org_image"),
@@ -588,6 +671,38 @@ class SeoSettings(BaseSetting):
             "See https://schema.org/"
         ),
     )
+    # logo = models.ForeignKey(
+    #     get_image_model_string(),
+    #     null=True,
+    #     blank=True,
+    #     on_delete=models.SET_NULL,
+    #     related_name="+",
+    #     verbose_name=_("Organization logo"),
+    #     help_text=_(
+    #         "Apply this logo on all pages. "
+    #         "It can be overwritten if another logo is uploaded on a specific page."
+    #     ),
+    # )
+    # org_image = models.ForeignKey(
+    #     get_image_model_string(),
+    #     null=True,
+    #     blank=True,
+    #     on_delete=models.SET_NULL,
+    #     related_name="+",
+    #     verbose_name=_("Photo of Organization"),
+    #     help_text=_(
+    #         "A photo of the facility. This photo will be cropped to 1:1, 4:3, "
+    #         "and 16:9 aspect ratios automatically. "
+    #         "Apply this logo on all pages. "
+    #         "It can be overwritten if another logo is uploaded on a specific page."
+    #     ),
+    # )
+    # action_blocks = StreamField(
+    #     [("action_blocks", StructuredDataActionBlock())],
+    #     blank=True,
+    #     verbose_name=_("Actions to all pages"),
+    #     help_text=_("Actions added here will be applied to all pages"),
+    # )
 
     @property
     def at_twitter_site(self):
@@ -604,6 +719,9 @@ class SeoSettings(BaseSetting):
                 FieldPanel("struct_meta"),
                 FieldPanel("twitter_meta"),
                 FieldPanel("twitter_site"),
+                # ImageChooserPanel("logo"),
+                # ImageChooserPanel("org_image"),
+                # StreamFieldPanel("action_blocks"),
             ],
             heading=_("Search Engine Optimization"),
         )
