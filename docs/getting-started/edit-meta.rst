@@ -6,7 +6,7 @@ Turning Features On or Off
 
 The recommended way to turn features on or off is using the Wagtail Site
 Settings. From the Wagtail Admin select **Settings > SEO**. From here each
-type of metadata can be turned on or off.
+type of metadata can be turned on or off. Also you can specify Actions to be included globally to every page.
 
 .. note::
 
