@@ -202,13 +202,6 @@ class SeoMixin(Page):
     seo_twitter_card = TwitterCard.SUMMARY
 
     @property
-    def seo_amp_url(self) -> str:
-        """
-        Gets the full/absolute/canonical URL for the AMP version of this page.
-        """
-        return "{0}?amp".format(self.seo_canonical_url)
-
-    @property
     def seo_author(self) -> str:
         """
         Gets the name of the author of this page.
@@ -595,14 +588,6 @@ class SeoSettings(BaseSetting):
             "See https://schema.org/"
         ),
     )
-    amp_pages = models.BooleanField(
-        default=True,
-        verbose_name=_("Use AMP Pages"),
-        help_text=_(
-            "Generates an alternate AMP version of article pages that are "
-            "preferred by search engines. See https://amp.dev/"
-        ),
-    )
 
     @property
     def at_twitter_site(self):
@@ -615,7 +600,6 @@ class SeoSettings(BaseSetting):
     panels = [
         MultiFieldPanel(
             [
-                FieldPanel("amp_pages"),
                 FieldPanel("og_meta"),
                 FieldPanel("struct_meta"),
                 FieldPanel("twitter_meta"),

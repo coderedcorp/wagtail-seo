@@ -65,13 +65,6 @@ Aside from these special fallbacks, every metadata value is accessed via a
 .. code-block:: python
 
     @property
-    def seo_amp_url(self) -> str:
-        """
-        Gets the full/absolute/canonical URL for the AMP version of this page.
-        """
-        ...
-
-    @property
     def seo_author(self) -> str:
         """
         Gets the name of the author of this page.
