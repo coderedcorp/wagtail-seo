@@ -54,6 +54,7 @@ class SeoTest(TestCase):
             slug="fullseo",
             seo_title="Custom Title",
             search_description="Custom Description",
+            breadcrumbs_are_active=True,
             og_image=Image.objects.create(
                 title="OG Image",
                 file=get_test_image_file(),
@@ -212,38 +213,71 @@ class SeoTest(TestCase):
         img1x1 = base_url + page.struct_org_image.get_rendition("fill-10000x10000").url
         img4x3 = base_url + page.struct_org_image.get_rendition("fill-40000x30000").url
         img16x9 = base_url + page.struct_org_image.get_rendition("fill-16000x9000").url
+        org_hours = []
+        for spec in page.struct_org_hours:
+            org_hours.append(spec.value.struct_dict)
+        potential_action = []
+        for action in page.struct_org_actions:
+            potential_action.append(action.value.struct_dict)
+
         expected_dict = {
             "@context": "http://schema.org",
-            "@type": page.struct_org_type,
-            "url": page.seo_canonical_url,
-            "name": page.seo_struct_org_name,
-            "logo": {
-                "@type": "ImageObject",
-                "url": page.seo_logo_url,
-            },
-            "image": [img1x1, img4x3, img16x9],
-            "telephone": page.struct_org_phone,
-            "address": {
-                "@type": "PostalAddress",
-                "streetAddress": page.struct_org_address_street,
-                "addressLocality": page.struct_org_address_locality,
-                "addressRegion": page.struct_org_address_region,
-                "postalCode": page.struct_org_address_postal,
-                "addressCountry": page.struct_org_address_country,
-            },
-            "geo": {
-                "@type": "GeoCoordinates",
-                "latitude": float(page.struct_org_geo_lat),
-                "longitude": float(page.struct_org_geo_lng),
-            },
-            "openingHoursSpecification": [],
-            "potentialAction": [],
+            "@graph": [
+                {
+                    "@type": page.struct_org_type,
+                    "url": page.seo_canonical_url,
+                    "name": page.seo_struct_org_name,
+                    "logo": {
+                        "@type": "ImageObject",
+                        "url": page.seo_logo_url,
+                    },
+                    "image": [img1x1, img4x3, img16x9],
+                    "telephone": page.struct_org_phone,
+                    "address": {
+                        "@type": "PostalAddress",
+                        "streetAddress": page.struct_org_address_street,
+                        "addressLocality": page.struct_org_address_locality,
+                        "addressRegion": page.struct_org_address_region,
+                        "postalCode": page.struct_org_address_postal,
+                        "addressCountry": page.struct_org_address_country,
+                    },
+                    "geo": {
+                        "@type": "GeoCoordinates",
+                        "latitude": "1.10000000",
+                        "longitude": "2.20000000",
+                    },
+                    "openingHoursSpecification": org_hours,
+                    "potentialAction": potential_action,
+                },
+                {
+                    "@type": "BreadcrumbList",
+                    "@id": "http://localhost/fullseo/#breadcrumb",
+                    "itemListElement": [
+                        {
+                            "@type": "ListItem",
+                            "position": 1,
+                            "item": {
+                                "@type": "WebPage",
+                                "@id": "http://localhost/",
+                                "url": "http://localhost/",
+                                "name": "Welcome to your new Wagtail site!",
+                            },
+                        },
+                        {
+                            "@type": "ListItem",
+                            "position": 2,
+                            "item": {
+                                "@type": "Airline",
+                                "@id": "http://localhost/fullseo/",
+                                "url": "http://localhost/fullseo/",
+                                "name": "Full Seo Page",
+                            },
+                        },
+                    ],
+                },
+                json.loads(page.struct_org_extra_json),
+            ],
         }
-        for spec in page.struct_org_hours:
-            expected_dict["openingHoursSpecification"].append(spec.value.struct_dict)
-        for action in page.struct_org_actions:
-            expected_dict["potentialAction"].append(action.value.struct_dict)
-        expected_dict.update(json.loads(page.struct_org_extra_json))
 
         expected_json = json.dumps(expected_dict, cls=utils.StructDataEncoder)
 
