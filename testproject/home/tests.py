@@ -267,7 +267,7 @@ class SeoTest(TestCase):
                             "@type": "ListItem",
                             "position": 2,
                             "item": {
-                                "@type": "Type",
+                                "@type": "Airline",
                                 "@id": "http://localhost/fullseo/",
                                 "url": "http://localhost/fullseo/",
                                 "name": "Full Seo Page",

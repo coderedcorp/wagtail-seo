@@ -278,7 +278,7 @@ class SeoMixin(Page):
             return self.struct_org_logo
         else:
             global_settings = SeoSettings.objects.last()
-            if global_settings:
+            if global_settings and global_settings.logo:
                 return global_settings.logo
         return None
 
@@ -302,7 +302,7 @@ class SeoMixin(Page):
             return self.struct_org_image
         else:
             global_settings = SeoSettings.objects.last()
-            if global_settings:
+            if global_settings and global_settings.org_image:
                 return global_settings.org_image
         return None
 
@@ -454,15 +454,15 @@ class SeoMixin(Page):
                 hours.append(spec.value.struct_dict)
             main_info.update({"openingHoursSpecification": hours})
 
-        # Actions.
+        # Add the Actions from the current page
         actions: List[dict] = []
         if self.struct_org_actions:
             for action in self.struct_org_actions:
                 actions.append(action.value.struct_dict)
 
-        # Global Actions.
+        # Add the Global Actions
         global_settings = SeoSettings.objects.last()
-        if global_settings.action_blocks:
+        if global_settings and global_settings.action_blocks:
             for global_action in global_settings.action_blocks:
                 actions.append(global_action.value.struct_dict)
 
