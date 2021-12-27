@@ -39,7 +39,7 @@ To set up your development environment:
 
 * With the script::
 
-       ./scripts/run_tests
+       ./scripts/run_tests.sh
 
 
 * Manually::
@@ -49,7 +49,7 @@ To set up your development environment:
        flake8 .
        mypy ./wagtailseo/
 
-#. Next, run the units tests. A simple Wagtail project using Wagtail SEO is
+Next, run the units tests. A simple Wagtail project using Wagtail SEO is
    in the ``testproject/`` directory. The tests will also generate a code
    coverage report at ``htmlcov/index.html``, which you can open in your browser::
 

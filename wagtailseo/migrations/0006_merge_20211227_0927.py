@@ -10,5 +10,3 @@ class Migration(migrations.Migration):
         ('wagtailseo', '0005_auto_20210125_1602'),
     ]
 
-    operations = [
-    ]
