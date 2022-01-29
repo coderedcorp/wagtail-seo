@@ -161,6 +161,7 @@ class SeoTest(TestCase):
                 <meta name="twitter:card" content="{ page.seo_twitter_card_content }" />
                 <meta name="twitter:title" content="{ page.seo_pagetitle }">
                 <meta name="twitter:image" content="{ page.seo_image_url }">
+                <meta name="twitter:description" content="{ page.seo_description }" />
                 <meta name="twitter:site" content="{ seo_set.at_twitter_site }" />
                 <link rel="amphtml" href="{ page.seo_amp_url }">
                 </head>
@@ -197,6 +198,7 @@ class SeoTest(TestCase):
             <meta name="twitter:card" content="{ page.seo_twitter_card_content }" />
             <meta name="twitter:title" content="{ page.seo_pagetitle }">
             <meta name="twitter:image" content="{ page.seo_image_url }">
+            <meta name="twitter:description" content="{ page.seo_description }" />
             <meta name="twitter:site" content="{ seo_set.at_twitter_site }" />
             <link rel="amphtml" href="{ page.seo_amp_url }">
             </head>
