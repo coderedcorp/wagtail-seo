@@ -33,3 +33,17 @@ Google's whims). That being said we heartily welcome contributions!
 
 Follow the [contributing guide](https://docs.coderedcorp.com/wagtail-seo/contributing.html)
 to get your development environment setup.
+
+
+Attribution
+-----------
+
+Icon file "wagtailseo-line-chart.svg":
+
+* Was sourced from the Fork Awesome project at
+   https://github.com/ForkAwesome/Fork-Awesome.
+
+* Is licensed under the Creative Commons Attribution 3.0 Unported license,
+  a copy of which is available at https://creativecommons.org/licenses/by/3.0/
+
+* Has been modified from the original sources.
