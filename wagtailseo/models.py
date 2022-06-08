@@ -20,7 +20,6 @@ from wagtail.images.models import AbstractImage
 
 from wagtailseo import settings, schema, utils
 from wagtailseo.blocks import OpenHoursBlock, StructuredDataActionBlock
-from wagtailseo.icon import SEO_ICON
 
 
 class SeoType(Enum):
@@ -549,7 +548,7 @@ class SeoMixin(Page):
     seo_panels = seo_meta_panels + seo_menu_panels + seo_struct_panels
 
 
-@register_setting(icon=SEO_ICON)
+@register_setting(icon="wagtailseo-line-chart")
 class SeoSettings(BaseSetting):
     """
     Toggle Search engine optimization features and meta tags.
