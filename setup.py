@@ -17,7 +17,7 @@ setup(
     include_package_data=True,
     packages=["wagtailseo"],
     python_requires=">=3.6",
-    install_requires=["wagtail>=2.9"],
+    install_requires=["wagtail>=3.0,<4.0"],
     classifiers=[
         "Framework :: Django",
         "Framework :: Wagtail",
