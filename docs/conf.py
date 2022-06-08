@@ -61,16 +61,18 @@ templates_path = ["_templates"]
 
 # -- Options for HTML output -------------------------------------------------
 
+html_show_sourcelink = False
+
 html_theme = "sphinx_wagtail_theme"
 
 html_sidebars = {"**": ["searchbox.html", "globaltoc.html", "sponsor.html"]}
 
 html_theme_options = {
-    "project_name": "wagtail-cache",
-    "github_url": "https://github.com/coderedcorp/wagtail-cache/blob/main/docs/",
+    "project_name": "wagtail-seo",
+    "github_url": "https://github.com/coderedcorp/wagtail-seo/blob/main/docs/",
     "footer_links": (
+        "GitHub|https://github.com/coderedcorp/wagtail-seo,"
         "Wagtail Hosting by CodeRed|https://www.codered.cloud/,"
-        "Wagtail Cache on GitHub|https://github.com/coderedcorp/wagtail-cache,"
         "About CodeRed|https://www.coderedcorp.com/"
     ),
 }
