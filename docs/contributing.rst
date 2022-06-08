@@ -18,7 +18,9 @@ Development Environment
 
 To set up your development environment:
 
-#. Create a new environment (in a ``.venv`` folder)::
+#. Create a new environment (in a ``.venv`` folder)
+
+   .. code-block:: shell
 
        python -m venv .venv
 
@@ -29,13 +31,17 @@ To set up your development environment:
        ./.venv/Scripts/Activate.ps1
 
 #. Enter the source code directory and install the package locally with
-   additional development tools::
+   additional development tools
+
+   .. code-block:: shell
 
        pip install -r requirements-dev.txt
 
 #. Write some code.
 
-#. Next, run the static analysis tools::
+#. Next, run the static analysis tools
+
+   .. code-block:: shell
 
        black .
        codespell .
@@ -44,7 +50,9 @@ To set up your development environment:
 
 #. Next, run the units tests. A simple Wagtail project using Wagtail SEO is
    in the ``testproject/`` directory. The tests will also generate a code
-   coverage report at ``htmlcov/index.html``, which you can open in your browser::
+   coverage report at ``htmlcov/index.html``, which you can open in your browser
+
+   .. code-block:: shell
 
        pytest ./testproject/
 
@@ -53,7 +61,9 @@ Documentation
 -------------
 
 To build the documentation, run the following, which will output to the
-``docs/_build/html/`` directory::
+``docs/_build/html/`` directory
+
+.. code-block:: shell
 
     sphinx-build -M html ./docs/ ./docs/_build/ -W
 
@@ -62,6 +72,8 @@ Publishing
 ----------
 
 To create a python package, run the following, which will output the package to
-the ``dist/`` directory::
+the ``dist/`` directory
+
+.. code-block:: shell
 
    python setup.py sdist bdist_wheel

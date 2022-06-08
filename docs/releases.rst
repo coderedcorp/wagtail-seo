@@ -28,7 +28,9 @@ Release Notes
 
 * Remove settings and references to AMP pages.
 
-* You may need to make migrations in your project after updating::
+* You may need to make migrations in your project after updating
+
+  .. code-block:: shell
 
     python manage.py makemigrations
     python manage.py migrate
