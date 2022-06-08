@@ -13,7 +13,7 @@ Status
 
 |                        |                      |
 |------------------------|----------------------|
-| Python Package         | [![PyPI - Python Version](https://img.shields.io/pypi/pyversions/wagtail-seo)](https://pypi.org/project/wagtail-seo/) [![PyPI - Django Version](https://img.shields.io/pypi/djversions/wagtail-seo)](https://pypi.org/project/wagtail-seo/) [![PyPI - Wheel](https://img.shields.io/pypi/wheel/wagtail-seo)](https://pypi.org/project/wagtail-seo/) [![PyPI - Downloads](https://img.shields.io/pypi/dm/wagtail-seo)](https://pypi.org/project/wagtail-seo/) [![PyPI](https://img.shields.io/pypi/v/wagtail-seo)](https://pypi.org/project/wagtail-seo/) |
+| Python Package         | [![PyPI - Python Version](https://img.shields.io/pypi/pyversions/wagtail-seo)](https://pypi.org/project/wagtail-seo/) [![PyPI - Wheel](https://img.shields.io/pypi/wheel/wagtail-seo)](https://pypi.org/project/wagtail-seo/) [![PyPI - Downloads](https://img.shields.io/pypi/dm/wagtail-seo)](https://pypi.org/project/wagtail-seo/) [![PyPI](https://img.shields.io/pypi/v/wagtail-seo)](https://pypi.org/project/wagtail-seo/) |
 | Build                  | [![Build Status](https://dev.azure.com/coderedcorp/cr-github/_apis/build/status/wagtail-seo?branchName=main)](https://dev.azure.com/coderedcorp/cr-github/_build/latest?definitionId=13&branchName=main) [![Azure DevOps tests (branch)](https://img.shields.io/azure-devops/tests/coderedcorp/cr-github/13/main)](https://dev.azure.com/coderedcorp/cr-github/_build/latest?definitionId=13&branchName=main) [![Azure DevOps coverage (branch)](https://img.shields.io/azure-devops/coverage/coderedcorp/cr-github/13/main)](https://dev.azure.com/coderedcorp/cr-github/_build/latest?definitionId=13&branchName=main) |
 
 
