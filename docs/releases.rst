@@ -9,6 +9,8 @@ Release Notes
 
 * Check for empty site when getting site name.
 
+* Support serializing ``datetime.date`` objects in structured data.
+
 
 2.0.0
 -----
@@ -28,6 +30,8 @@ Release Notes
 * Only render SEO meta tags if a page object is present in the template context.
 
 * Check for empty site when getting site name.
+
+* Support serializing ``datetime.date`` objects in structured data.
 
 
 1.0.0
