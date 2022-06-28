@@ -1,5 +1,5 @@
 import re
-from datetime import datetime, time
+from datetime import date, datetime, time
 from json import JSONEncoder
 from typing import List, Union
 
@@ -13,12 +13,12 @@ PROTOCOL_RE = re.compile(r"^(\w[\w\.\-\+]*:)*//")
 MEDIA_IS_ABSOLUTE = PROTOCOL_RE.match(settings.MEDIA_URL)
 
 
-def serialize_date(date: Union[datetime, time]) -> str:
+def serialize_date(date: Union[date, datetime, time]) -> str:
     """
     Serializes a datetime or time into ISO 8601 format required for Open Graph
     and Structured Data.
 
-    :param Union[datetime, time] date: The date object to serialize.
+    :param Union[date, datetime, time] date: The date object to serialize.
     :rtype: str
     :returns: String-ified date.
     """
@@ -81,6 +81,10 @@ class StructDataEncoder(JSONEncoder):
     def default(self, obj):
 
         # Serialize dates to ISO 8601 format.
+        if isinstance(obj, date):
+            return serialize_date(obj)
+
+        # Serialize datetimes to ISO 8601 format.
         if isinstance(obj, datetime):
             return serialize_date(obj)
 
