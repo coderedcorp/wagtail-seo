@@ -7,6 +7,8 @@ Release Notes
 
 * Only render SEO meta tags if a page object is present in the template context.
 
+* Check for empty site when getting site name.
+
 
 2.0.0
 -----
@@ -24,6 +26,8 @@ Release Notes
 -----
 
 * Only render SEO meta tags if a page object is present in the template context.
+
+* Check for empty site when getting site name.
 
 
 1.0.0
