@@ -294,8 +294,9 @@ class SeoMixin(Page):
         Gets the site name.
         Override in your Page model as necessary.
         """
-        if self.get_site():
-            return self.get_site().site_name
+        s = self.get_site()
+        if s:
+            return s.site_name
         return ""
 
     @property
