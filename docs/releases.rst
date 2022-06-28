@@ -2,6 +2,12 @@ Release Notes
 =============
 
 
+2.0.1
+-----
+
+* Only render SEO meta tags if a page object is present in the template context.
+
+
 2.0.0
 -----
 
@@ -12,6 +18,12 @@ Release Notes
 
 * Supports Wagtail 3 and only Wagtail 3. Wagtail 2 support will be maintained in
   the 1.x series as needed.
+
+
+1.0.1
+-----
+
+* Only render SEO meta tags if a page object is present in the template context.
 
 
 1.0.0
