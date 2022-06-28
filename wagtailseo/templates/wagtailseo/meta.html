@@ -1,3 +1,6 @@
+{# Only render this template if we have what appears to be a wagtail-seo page #}
+{% if self and self.seo_pagetitle %}
+
 {# Standard metadata #}
 {% block html_seo_base %}
 <title>{% block title %}{{ self.seo_pagetitle }}{% endblock %}</title>
@@ -39,3 +42,5 @@
 {% endif %}
 {% endblock %}
 {% block twitter_seo_extra %}{% endblock %}
+
+{% endif %}
