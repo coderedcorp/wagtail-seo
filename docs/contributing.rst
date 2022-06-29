@@ -72,8 +72,11 @@ Publishing
 ----------
 
 To create a python package, run the following, which will output the package to
-the ``dist/`` directory
+the ``dist/`` directory. Be sure to first delete any existing build caches, as
+those could include files from other builds and create broken wheels.
 
 .. code-block:: shell
 
+   rm -r ./build/
+   rm -r ./dist/
    python setup.py sdist bdist_wheel
