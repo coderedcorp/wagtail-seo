@@ -24,6 +24,12 @@ Release Notes
   the 1.x series as needed.
 
 
+1.0.2
+-----
+
+* Fix broken 1.0.1 wheel caused by build cache issue.
+
+
 1.0.1
 -----
 
