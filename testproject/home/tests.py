@@ -7,9 +7,9 @@ from django.urls import reverse
 from django.utils import timezone
 from django.utils.text import capfirst
 from django.contrib.auth.models import User
-from wagtail.core.models import Page
+from wagtail.models import Page
 from wagtail.images.tests.utils import Image, get_test_image_file
-from wagtail.tests.utils import WagtailTestUtils
+from wagtail.test.utils import WagtailTestUtils
 from wagtailseo import schema
 from wagtailseo import utils
 from wagtailseo.models import SeoSettings
