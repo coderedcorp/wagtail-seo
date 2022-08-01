@@ -2,6 +2,14 @@ Release Notes
 =============
 
 
+2.1.0
+-----
+
+* Add Twitter card description meta tag.
+
+* Fix warnings related to Wagtail 3 import paths and edit handlers.
+
+
 2.0.1
 -----
 
