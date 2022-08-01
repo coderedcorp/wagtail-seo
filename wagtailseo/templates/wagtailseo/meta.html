@@ -38,6 +38,7 @@
 <meta name="twitter:card" content="{% block twitter_card %}{{ self.seo_twitter_card_content }}{% endblock %}" />
 <meta name="twitter:title" content="{% block twitter_title %}{{ self.seo_pagetitle }}{% endblock %}">
 <meta name="twitter:image" content="{% block twitter_image %}{{ self.seo_image_url }}{% endblock %}">
+<meta name="twitter:description" content="{% block twitter_description %}{{ self.seo_description }}{% endblock %}">
 <meta name="twitter:site" content="{% block twitter_site %}{{ settings.wagtailseo.SeoSettings.at_twitter_site }}{% endblock %}" />
 {% endif %}
 {% endblock %}
