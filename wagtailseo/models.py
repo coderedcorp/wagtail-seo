@@ -5,17 +5,15 @@ from typing import Optional
 
 from django.db import models
 from django.utils.translation import gettext_lazy as _
-from wagtail.admin.edit_handlers import (
+from wagtail.admin.panels import (
     HelpPanel,
     FieldPanel,
     MultiFieldPanel,
-    StreamFieldPanel,
 )
 from wagtail.contrib.settings.models import BaseSetting, register_setting
-from wagtail.core.fields import StreamField
-from wagtail.core.models import Page
+from wagtail.fields import StreamField
+from wagtail.models import Page
 from wagtail.images import get_image_model_string
-from wagtail.images.edit_handlers import ImageChooserPanel
 from wagtail.images.models import AbstractImage
 
 from wagtailseo import settings, schema, utils
@@ -506,7 +504,7 @@ class SeoMixin(Page):
                 FieldPanel("seo_title"),
                 FieldPanel("search_description"),
                 FieldPanel("canonical_url"),
-                ImageChooserPanel("og_image"),
+                FieldPanel("og_image"),
             ],
             _("Search and Social Previews"),
         ),
@@ -530,8 +528,8 @@ class SeoMixin(Page):
                 ),
                 FieldPanel("struct_org_type"),
                 FieldPanel("struct_org_name"),
-                ImageChooserPanel("struct_org_logo"),
-                ImageChooserPanel("struct_org_image"),
+                FieldPanel("struct_org_logo"),
+                FieldPanel("struct_org_image"),
                 FieldPanel("struct_org_phone"),
                 FieldPanel("struct_org_address_street"),
                 FieldPanel("struct_org_address_locality"),
@@ -540,8 +538,8 @@ class SeoMixin(Page):
                 FieldPanel("struct_org_address_country"),
                 FieldPanel("struct_org_geo_lat"),
                 FieldPanel("struct_org_geo_lng"),
-                StreamFieldPanel("struct_org_hours"),
-                StreamFieldPanel("struct_org_actions"),
+                FieldPanel("struct_org_hours"),
+                FieldPanel("struct_org_actions"),
                 FieldPanel("struct_org_extra_json"),
             ],
             _("Structured Data - Organization"),

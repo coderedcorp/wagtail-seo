@@ -4,7 +4,7 @@ from json import JSONEncoder
 from typing import List, Union
 
 from django.conf import settings
-from wagtail.core.models import Site
+from wagtail.models import Site
 from wagtail.images.models import AbstractImage
 
 
