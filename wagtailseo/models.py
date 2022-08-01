@@ -9,13 +9,11 @@ from wagtail.admin.panels import (
     HelpPanel,
     FieldPanel,
     MultiFieldPanel,
-    StreamFieldPanel,
 )
 from wagtail.contrib.settings.models import BaseSetting, register_setting
 from wagtail.fields import StreamField
 from wagtail.models import Page
 from wagtail.images import get_image_model_string
-from wagtail.images.edit_handlers import ImageChooserPanel
 from wagtail.images.models import AbstractImage
 
 from wagtailseo import settings, schema, utils
