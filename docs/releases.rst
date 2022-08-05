@@ -1,6 +1,19 @@
 Release Notes
 =============
 
+2.2.0
+-----
+
+* Fix Wagtail and Django deprecation warnings.
+
+* Specify ``use_json_field=True`` in StreamFields. This will require making a
+  migration in your project:
+
+  .. code-block:: text
+
+     python manage.py makemigrations
+     python manage.py migrate
+
 
 2.1.0
 -----
