@@ -152,11 +152,13 @@ class SeoMixin(Page):
         [("hours", OpenHoursBlock())],
         blank=True,
         verbose_name=_("Hours of operation"),
+        use_json_field=True,
     )
     struct_org_actions = StreamField(
         [("actions", StructuredDataActionBlock())],
         blank=True,
         verbose_name=_("Actions"),
+        use_json_field=True,
     )
     struct_org_extra_json = models.TextField(
         blank=True,
