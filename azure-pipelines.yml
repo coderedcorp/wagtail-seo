@@ -47,6 +47,11 @@ stages:
     - script: python -m pip install -r requirements-dev.txt
       displayName: 'CR-QC: Install from local repo'
 
+    - script: |
+        cd testproject/
+        python manage.py makemigrations --check
+      displayName: 'CR-QC: Check migrations'
+
     - script: pytest ./testproject/
       displayName: 'CR-QC: Run unit tests'
 
