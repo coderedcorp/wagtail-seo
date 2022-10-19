@@ -5,12 +5,13 @@ from typing import Optional
 
 from django.db import models
 from django.utils.translation import gettext_lazy as _
+from wagtail import VERSION as WAG_VERSION
 from wagtail.admin.panels import (
     HelpPanel,
     FieldPanel,
     MultiFieldPanel,
 )
-from wagtail.contrib.settings.models import BaseSetting, register_setting
+from wagtail.contrib.settings.models import register_setting
 from wagtail.fields import StreamField
 from wagtail.models import Page
 from wagtail.images import get_image_model_string
@@ -18,6 +19,13 @@ from wagtail.images.models import AbstractImage
 
 from wagtailseo import settings, schema, utils
 from wagtailseo.blocks import OpenHoursBlock, StructuredDataActionBlock
+
+# Wagtail 3
+if WAG_VERSION[0] == 3:
+    from wagtail.contrib.settings.models import BaseSetting as BaseSiteSetting
+# Wagtail 4
+else:
+    from wagtail.contrib.settings.models import BaseSiteSetting
 
 
 class SeoType(Enum):
@@ -552,7 +560,7 @@ class SeoMixin(Page):
 
 
 @register_setting(icon="wagtailseo-line-chart")
-class SeoSettings(BaseSetting):
+class SeoSettings(BaseSiteSetting):
     """
     Toggle Search engine optimization features and meta tags.
     """
