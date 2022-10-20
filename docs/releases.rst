@@ -1,6 +1,12 @@
 Release Notes
 =============
 
+2.3.0
+-----
+
+* Support Wagtail 4.
+
+
 2.2.0
 -----
 
