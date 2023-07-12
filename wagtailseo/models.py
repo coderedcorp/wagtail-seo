@@ -5,7 +5,6 @@ from typing import Optional
 
 from django.db import models
 from django.utils.translation import gettext_lazy as _
-from wagtail import VERSION as WAG_VERSION
 from wagtail.admin.panels import (
     HelpPanel,
     FieldPanel,
@@ -20,12 +19,8 @@ from wagtail.images.models import AbstractImage
 from wagtailseo import settings, schema, utils
 from wagtailseo.blocks import OpenHoursBlock, StructuredDataActionBlock
 
-# Wagtail 3
-if WAG_VERSION[0] == 3:
-    from wagtail.contrib.settings.models import BaseSetting as BaseSiteSetting
-# Wagtail 4
-else:
-    from wagtail.contrib.settings.models import BaseSiteSetting
+from wagtail.contrib.settings.models import BaseSiteSetting
+from wagtail.admin.widgets.slug import SlugInput
 
 
 class SeoType(Enum):
@@ -510,7 +505,7 @@ class SeoMixin(Page):
     seo_meta_panels = [
         MultiFieldPanel(
             [
-                FieldPanel("slug"),
+                FieldPanel("slug", widget=SlugInput),
                 FieldPanel("seo_title"),
                 FieldPanel("search_description"),
                 FieldPanel("canonical_url"),
