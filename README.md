@@ -1,11 +1,18 @@
-Wagtail SEO
+CJKCMS Wagtail SEO
+===========
+
+Project forked from [https://github.com/coderedcorp/wagtail-seo](Wagtail SEO) to add support for Wagtail 5 and upcoming Wagtail 6.
+Original project is still at Wagtail 4 compatibility, making it unusable with [https://github.com/cjkpl/wagtail-cjkcms.git](CJKCMS).
+
+Package name is left without change (`wagtailseo`), so it can be used as drop-in replacement for original package.
+
 ===========
 
 Search engine and social media optimization for Wagtail.
 
-[Source code on GitHub](https://github.com/coderedcorp/wagtail-seo) |
-[Documentation](https://docs.coderedcorp.com/wagtail-seo/) |
-[PyPI](https://pypi.org/project/wagtail-seo/)
+[Source code on GitHub](https://github.com/cjkpl/cjkcms-seo.git) |
+[Documentation](https://github.com/cjkpl/cjkcms-seo.git) |
+[PyPI](https://pypi.org/project/cjkcms-seo/)
 
 
 Status
@@ -13,8 +20,7 @@ Status
 
 |                        |                      |
 |------------------------|----------------------|
-| Python Package         | [![PyPI - Python Version](https://img.shields.io/pypi/pyversions/wagtail-seo)](https://pypi.org/project/wagtail-seo/) [![PyPI - Wheel](https://img.shields.io/pypi/wheel/wagtail-seo)](https://pypi.org/project/wagtail-seo/) [![PyPI - Downloads](https://img.shields.io/pypi/dm/wagtail-seo)](https://pypi.org/project/wagtail-seo/) [![PyPI](https://img.shields.io/pypi/v/wagtail-seo)](https://pypi.org/project/wagtail-seo/) |
-| Build                  | [![Build Status](https://dev.azure.com/coderedcorp/cr-github/_apis/build/status/wagtail-seo?branchName=main)](https://dev.azure.com/coderedcorp/cr-github/_build/latest?definitionId=13&branchName=main) [![Azure DevOps tests (branch)](https://img.shields.io/azure-devops/tests/coderedcorp/cr-github/13/main)](https://dev.azure.com/coderedcorp/cr-github/_build/latest?definitionId=13&branchName=main) [![Azure DevOps coverage (branch)](https://img.shields.io/azure-devops/coverage/coderedcorp/cr-github/13/main)](https://dev.azure.com/coderedcorp/cr-github/_build/latest?definitionId=13&branchName=main) |
+| Python Package         | [![PyPI - Python Version](https://img.shields.io/pypi/pyversions/cjkcms-seo)](https://pypi.org/project/cjkcms-seo/) [![PyPI - Wheel](https://img.shields.io/pypi/wheel/cjkcms-seo)](https://pypi.org/project/cjkcms-seo/) [![PyPI - Downloads](https://img.shields.io/pypi/dm/cjkcms-seo)](https://pypi.org/project/cjkcms-seo/) [![PyPI](https://img.shields.io/pypi/v/cjkcms-seo)](https://pypi.org/project/cjkcms-seo/) |
 
 
 Getting Started
