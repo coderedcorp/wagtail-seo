@@ -79,7 +79,6 @@ class StructDataEncoder(JSONEncoder):
     """
 
     def default(self, obj):
-
         # Serialize dates to ISO 8601 format.
         if isinstance(obj, date):
             return serialize_date(obj)

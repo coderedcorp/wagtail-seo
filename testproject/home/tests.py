@@ -25,7 +25,6 @@ class SeoTest(TestCase):
 
     @classmethod
     def setUpClass(cls):
-
         # Create an admin user.
         cls.user = User.objects.create(
             username="admin",
