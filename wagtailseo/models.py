@@ -6,19 +6,21 @@ from typing import Optional
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from wagtail import VERSION as WAG_VERSION
-from wagtail.admin.panels import (
-    HelpPanel,
-    FieldPanel,
-    MultiFieldPanel,
-)
+from wagtail.admin.panels import FieldPanel
+from wagtail.admin.panels import HelpPanel
+from wagtail.admin.panels import MultiFieldPanel
 from wagtail.contrib.settings.models import register_setting
 from wagtail.fields import StreamField
-from wagtail.models import Page
 from wagtail.images import get_image_model_string
 from wagtail.images.models import AbstractImage
+from wagtail.models import Page
 
-from wagtailseo import settings, schema, utils
-from wagtailseo.blocks import OpenHoursBlock, StructuredDataActionBlock
+from wagtailseo import schema
+from wagtailseo import settings
+from wagtailseo import utils
+from wagtailseo.blocks import OpenHoursBlock
+from wagtailseo.blocks import StructuredDataActionBlock
+
 
 # Wagtail 3
 if WAG_VERSION[0] == 3:

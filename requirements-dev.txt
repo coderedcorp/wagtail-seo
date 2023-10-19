@@ -3,6 +3,7 @@
 black
 codespell>=2
 flake8
+isort
 mypy
 pytest
 pytest-cov

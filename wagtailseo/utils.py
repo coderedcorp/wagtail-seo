@@ -1,11 +1,14 @@
 import re
-from datetime import date, datetime, time
+from datetime import date
+from datetime import datetime
+from datetime import time
 from json import JSONEncoder
-from typing import List, Union
+from typing import List
+from typing import Union
 
 from django.conf import settings
-from wagtail.models import Site
 from wagtail.images.models import AbstractImage
+from wagtail.models import Site
 
 
 # Matches a protocol, such as https://
@@ -79,7 +82,6 @@ class StructDataEncoder(JSONEncoder):
     """
 
     def default(self, obj):
-
         # Serialize dates to ISO 8601 format.
         if isinstance(obj, date):
             return serialize_date(obj)

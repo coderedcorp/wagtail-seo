@@ -1,5 +1,8 @@
 from wagtail.models import Page
-from wagtailseo.models import SeoMixin, SeoType, TwitterCard
+
+from wagtailseo.models import SeoMixin
+from wagtailseo.models import SeoType
+from wagtailseo.models import TwitterCard
 
 
 class WagtailPage(Page):

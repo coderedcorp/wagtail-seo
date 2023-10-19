@@ -1,20 +1,24 @@
 import json
 from decimal import Decimal
 
+from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
-from django.test import TestCase, override_settings
+from django.test import override_settings
+from django.test import TestCase
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.text import capfirst
-from django.contrib.auth.models import User
+from wagtail.images.tests.utils import get_test_image_file
+from wagtail.images.tests.utils import Image
 from wagtail.models import Page
-from wagtail.images.tests.utils import Image, get_test_image_file
 from wagtail.test.utils import WagtailTestUtils
+
+from home.models import ArticlePage
+from home.models import SeoPage
+from home.models import WagtailPage
 from wagtailseo import schema
 from wagtailseo import utils
 from wagtailseo.models import SeoSettings
-
-from home.models import ArticlePage, SeoPage, WagtailPage
 
 
 class SeoTest(TestCase):
@@ -25,7 +29,6 @@ class SeoTest(TestCase):
 
     @classmethod
     def setUpClass(cls):
-
         # Create an admin user.
         cls.user = User.objects.create(
             username="admin",

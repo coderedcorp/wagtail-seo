@@ -1,6 +1,6 @@
 [tool.black]
 line-length = 88
-target-version = ['py36', 'py37', 'py38', 'py39']
+target-version = ['py38', 'py39', 'py310', 'py311']
 # Regular expression of files to exclude.
 exclude = '''
 /(
@@ -9,3 +9,17 @@ exclude = '''
     | venv
 )/
 '''
+
+[tool.isort]
+force_alphabetical_sort_within_sections = true
+force_single_line = true
+lines_after_imports = 2
+lines_before_imports = 0
+lines_between_sections = 1
+lines_between_types = 0
+line_length = 80
+profile = "black"
+skip_gitignore = true
+extend_skip = ["migrations"]
+# Specific to this project
+known_first_party = ["home", "wagtailseo"]
