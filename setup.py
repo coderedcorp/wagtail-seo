@@ -18,7 +18,7 @@ setup(
     license="BSD license",
     include_package_data=True,
     packages=["wagtailseo"],
-    python_requires=">=3.6",
+    python_requires=">=3.8",
     install_requires=["wagtail>=3.0,<6.0"],
     classifiers=[
         "Framework :: Django",
