@@ -29,14 +29,18 @@ stages:
       vmImage: 'ubuntu-latest'
     strategy:
       matrix:
-        py3.7:
-          PYTHON_VERSION: '3.7'
-        py3.8:
+        py3.8_wag3:
           PYTHON_VERSION: '3.8'
-        py3.9:
+          WAGTAIL: '3.*'
+        py3.9_wag4:
           PYTHON_VERSION: '3.9'
-        py3.10:
+          WAGTAIL: '4.*'
+        py3.10_wag5:
           PYTHON_VERSION: '3.10'
+          WAGTAIL: '5.*'
+        py3.11_wag5:
+          PYTHON_VERSION: '3.11'
+          WAGTAIL: '5.*'
     steps:
     - task: UsePythonVersion@0
       displayName: 'Use Python version'
@@ -44,7 +48,7 @@ stages:
         versionSpec: '$(PYTHON_VERSION)'
         architecture: 'x64'
 
-    - script: python -m pip install -r requirements-dev.txt
+    - script: python -m pip install -r requirements-dev.txt wagtail==$(WAGTAIL)
       displayName: 'CR-QC: Install from local repo'
 
     - script: |
@@ -84,7 +88,7 @@ stages:
     - task: UsePythonVersion@0
       displayName: 'Use Python version'
       inputs:
-        versionSpec: '3.10'
+        versionSpec: '3.11'
         architecture: 'x64'
 
     - script: python -m pip install -r requirements-dev.txt
@@ -132,7 +136,7 @@ stages:
     - task: UsePythonVersion@0
       displayName: 'Use Python version'
       inputs:
-        versionSpec: '3.10'
+        versionSpec: '3.11'
         architecture: 'x64'
 
     - script: python -m pip install -r requirements-dev.txt
