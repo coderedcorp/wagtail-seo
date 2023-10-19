@@ -344,7 +344,7 @@ class SeoMixin(Page):
     @property
     def seo_struct_org_name(self) -> str:
         """
-        Gets org name for sturctured data using a fallback.
+        Gets org name for structured data using a fallback.
         """
         if self.struct_org_name:
             return self.struct_org_name

@@ -9,7 +9,7 @@
 #   CR-DEPLOY: for publication or deployment.
 #   [no prefix]: for unrelated CI setup/tooling.
 #
-# Use PowerShell Core for any utility scripts so they are re-usable across
+# Use PowerShell Core for any utility scripts so they are reusable across
 # Windows, macOS, and Linux.
 #
 
