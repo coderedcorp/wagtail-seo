@@ -34,6 +34,7 @@ else:
 slug_field_kwargs = {}
 if WAG_VERSION[0] >= 5:
     from wagtail.admin.widgets.slug import SlugInput
+
     slug_field_kwargs = {"widget": SlugInput}
 
 
