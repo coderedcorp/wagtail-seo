@@ -25,9 +25,17 @@ from wagtailseo.blocks import StructuredDataActionBlock
 # Wagtail 3
 if WAG_VERSION[0] == 3:
     from wagtail.contrib.settings.models import BaseSetting as BaseSiteSetting
-# Wagtail 4
+# Wagtail 4+
 else:
     from wagtail.contrib.settings.models import BaseSiteSetting
+
+
+# Slug widget was added in Wagtail 5 and is required to properly generate slugs.
+slug_field_kwargs = {}
+if WAG_VERSION[0] >= 5:
+    from wagtail.admin.widgets.slug import SlugInput
+
+    slug_field_kwargs = {"widget": SlugInput}
 
 
 class SeoType(Enum):
@@ -512,7 +520,7 @@ class SeoMixin(Page):
     seo_meta_panels = [
         MultiFieldPanel(
             [
-                FieldPanel("slug"),
+                FieldPanel("slug", **slug_field_kwargs),
                 FieldPanel("seo_title"),
                 FieldPanel("search_description"),
                 FieldPanel("canonical_url"),
