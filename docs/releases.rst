@@ -1,6 +1,12 @@
 Release Notes
 =============
 
+2.4.1
+-----
+
+* Fix bug with slug generation in Wagtail 5.
+
+
 2.4.0
 -----
 
