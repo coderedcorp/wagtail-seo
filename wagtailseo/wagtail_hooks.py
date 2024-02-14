@@ -1,6 +1,7 @@
 """
 Registers wagtail-seo icon in the admin dashboard.
 """
+
 from wagtail import hooks
 
 

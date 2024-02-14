@@ -1,6 +1,7 @@
 """
 Provide default Django settings.
 """
+
 from django.conf import settings
 
 
