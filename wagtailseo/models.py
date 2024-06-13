@@ -95,7 +95,10 @@ class SeoMixin(Page):
         on_delete=models.SET_NULL,
         related_name="+",
         verbose_name=_("Organization logo"),
-        help_text=_("Leave blank to use the logo in Settings > Layout > Logo"),
+        help_text=_(
+            "Logo representative of the organisation. Must be 112x112px minimum; "
+            "take note that it will be displayed on a white background"
+        ),
     )
     struct_org_image = models.ForeignKey(
         get_image_model_string(),
