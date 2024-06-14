@@ -22,8 +22,7 @@ by Wagtail SEO. You may mix and match as necessary.
         # Each is a list of panels.
         promote_panels = (
             seo_meta_panels +
-            seo_menu_panels +
-            seo_struct_panels
+            seo_menu_panels
         )
 
 Going further, it is possible to totally override all of Wagtail's tabs to
