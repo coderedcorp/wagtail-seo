@@ -1,6 +1,14 @@
 Release Notes
 =============
 
+3.0.0
+-----
+
+* Move SeoMixin struct_org information to SeoOrgMixin instead
+
+/!\\ The model structure change will need to be handled,
+see :doc:`/getting-started/migration-3`.
+
 2.5.0
 -----
 

@@ -6,3 +6,4 @@ Getting Started with Wagtail SEO
 
     Installation <install>
     Editing Metadata <edit-meta>
+    Migrating to 3.0 <migration-3>

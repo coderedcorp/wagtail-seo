@@ -47,6 +47,19 @@ show up in the page editor, you may also want to override the promote panels.
 
         promote_panels = SeoMixin.seo_panels
 
+For all of your sites' root pages, inherit from ``SeoOrgMixin`` instead to be able to
+input your organization data.
+
+.. code-block:: python
+
+    # models.py
+    from wagtailseo.models import SeoOrgMixin
+
+    class HomePage(SeoOrgMixin, Page):
+        ...
+
+        promote_panels = SeoOrgMixin.seo_panels
+
 Wagtail SEO also supports special types for article-style pages (news, blog
 posts, etc.), and controls for Twitter card previews. Article-style pages should
 be indicated as such:
