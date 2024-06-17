@@ -53,6 +53,9 @@ on your site's home page. If you have a site containing multiple locations,
 such as branches, stores, regional offices, etc. --- also provide this info
 on each page representing a unique location.
 
+.. note::
+    This fields will only be included of you make the page inherit from ``SeoOrgMixin`` instead of ``SeoMixin``
+
 * **Organization type** --- Should be provided on the home page. If this is
   blank on a page, the info from the home page will be used instead when
   necessary.

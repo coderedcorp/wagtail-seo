@@ -1,6 +1,7 @@
 from wagtail.models import Page
 
 from wagtailseo.models import SeoMixin
+from wagtailseo.models import SeoOrgMixin
 from wagtailseo.models import SeoType
 from wagtailseo.models import TwitterCard
 
@@ -13,14 +14,14 @@ class WagtailPage(Page):
     template = "home/page.html"
 
 
-class SeoPage(SeoMixin, Page):
+class SeoPage(SeoOrgMixin, Page):
     """
     Represents a normal use-case.
     """
 
     template = "home/page.html"
 
-    promote_panels = SeoMixin.seo_panels
+    promote_panels = SeoOrgMixin.seo_panels
 
 
 class ArticlePage(SeoMixin, Page):
