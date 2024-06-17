@@ -61,27 +61,6 @@ class SeoTest(TestCase):
                 title="OG Image",
                 file=get_test_image_file(),
             ),
-            struct_org_type=schema.SCHEMA_ORG_CHOICES[1][0],
-            struct_org_name="Custom Org Name",
-            struct_org_logo=Image.objects.create(
-                title="Struct Org Logo",
-                file=get_test_image_file(),
-            ),
-            struct_org_image=Image.objects.create(
-                title="Struct Org Image",
-                file=get_test_image_file(),
-            ),
-            struct_org_phone="+1-555-867-5309",
-            struct_org_address_street="55 Public Square, Suite 1710",
-            struct_org_address_locality="Cleveland",
-            struct_org_address_region="OH",
-            struct_org_address_postal="44113",
-            struct_org_address_country="US",
-            struct_org_geo_lat=Decimal("1.1"),
-            struct_org_geo_lng=Decimal("2.2"),
-            struct_org_hours=r'[{"type": "hours", "value": {"days": ["Monday", "Tuesday", "Wednesday"], "start_time": "09:00:00", "end_time": "17:00:00"}, "id": "d6ff4389-5c26-4b78-87cc-5e108bcb692d"}]',  # noqa
-            struct_org_actions=r'[{"type": "actions", "value": {"action_type": "OrderAction", "target": "https://www.example.com/", "language": "en-US", "result_type": "FoodEstablishmentReservation", "result_name": "Custom Result", "extra_json": ""}, "id": "4ef5ddc2-a25f-4263-8516-8262340e9a7f"}]',  # noqa
-            struct_org_extra_json=r'{"json": true, "array": ["thing1", "thing2"]}',
             content_type=cls.get_content_type("seopage"),
         )
 
@@ -114,12 +93,35 @@ class SeoTest(TestCase):
         site.save()
 
         # Turn on all SEO settings.
-        seo_set: SeoSettings = SeoSettings.for_site(cls.page_home.get_site())
-        seo_set.og_meta = True
-        seo_set.twitter_meta = True
-        seo_set.struct_meta = True
-        seo_set.twitter_site = "@coderedcorp"
-        seo_set.save()
+        cls.seo_set: SeoSettings = SeoSettings.for_site(cls.page_home.get_site())
+        cls.seo_set.og_meta = True
+        cls.seo_set.twitter_meta = True
+        cls.seo_set.struct_meta = True
+        cls.seo_set.twitter_site = "@coderedcorp"
+        cls.seo_set.struct_org_type = schema.SCHEMA_ORG_CHOICES[1][0]
+        cls.seo_set.struct_org_name = "Custom Org Name"
+        cls.seo_set.struct_org_logo = Image.objects.create(
+            title="Struct Org Logo",
+            file=get_test_image_file(),
+        )
+        cls.seo_set.struct_org_image = Image.objects.create(
+            title="Struct Org Image",
+            file=get_test_image_file(),
+        )
+        cls.seo_set.struct_org_phone = "+1-555-867-5309"
+        cls.seo_set.struct_org_address_street = "55 Public Square, Suite 1710"
+        cls.seo_set.struct_org_address_locality = "Cleveland"
+        cls.seo_set.struct_org_address_region = "OH"
+        cls.seo_set.struct_org_address_postal = "44113"
+        cls.seo_set.struct_org_address_country = "US"
+        cls.seo_set.struct_org_geo_lat = Decimal("1.1")
+        cls.seo_set.struct_org_geo_lng = Decimal("2.2")
+        cls.seo_set.struct_org_hours = r'[{"type": "hours", "value": {"days": ["Monday", "Tuesday", "Wednesday"], "start_time": "09:00:00", "end_time": "17:00:00"}, "id": "d6ff4389-5c26-4b78-87cc-5e108bcb692d"}]'  # noqa
+        cls.seo_set.struct_org_actions = r'[{"type": "actions", "value": {"action_type": "OrderAction", "target": "https://www.example.com/", "language": "en-US", "result_type": "FoodEstablishmentReservation", "result_name": "Custom Result", "extra_json": ""}, "id": "4ef5ddc2-a25f-4263-8516-8262340e9a7f"}]'  # noqa
+        cls.seo_set.struct_org_extra_json = (
+            r'{"json": true, "array": ["thing1", "thing2"]}'
+        )
+        cls.seo_set.save()
 
     @classmethod
     def tearDownClass(cls):
@@ -214,12 +216,21 @@ class SeoTest(TestCase):
         # Manually render the JSON and match against page HTML.
         # Get images to compare against rendered content.
         base_url = utils.get_absolute_media_url(page.get_site())
-        img1x1 = base_url + page.struct_org_image.get_rendition("fill-10000x10000").url
-        img4x3 = base_url + page.struct_org_image.get_rendition("fill-40000x30000").url
-        img16x9 = base_url + page.struct_org_image.get_rendition("fill-16000x9000").url
+        img1x1 = (
+            base_url
+            + self.seo_set.struct_org_image.get_rendition("fill-10000x10000").url
+        )
+        img4x3 = (
+            base_url
+            + self.seo_set.struct_org_image.get_rendition("fill-40000x30000").url
+        )
+        img16x9 = (
+            base_url
+            + self.seo_set.struct_org_image.get_rendition("fill-16000x9000").url
+        )
         expected_dict = {
             "@context": "http://schema.org",
-            "@type": page.struct_org_type,
+            "@type": self.seo_set.struct_org_type,
             "url": page.seo_canonical_url,
             "name": page.seo_struct_org_name,
             "logo": {
@@ -227,28 +238,28 @@ class SeoTest(TestCase):
                 "url": page.seo_logo_url,
             },
             "image": [img1x1, img4x3, img16x9],
-            "telephone": page.struct_org_phone,
+            "telephone": self.seo_set.struct_org_phone,
             "address": {
                 "@type": "PostalAddress",
-                "streetAddress": page.struct_org_address_street,
-                "addressLocality": page.struct_org_address_locality,
-                "addressRegion": page.struct_org_address_region,
-                "postalCode": page.struct_org_address_postal,
-                "addressCountry": page.struct_org_address_country,
+                "streetAddress": self.seo_set.struct_org_address_street,
+                "addressLocality": self.seo_set.struct_org_address_locality,
+                "addressRegion": self.seo_set.struct_org_address_region,
+                "postalCode": self.seo_set.struct_org_address_postal,
+                "addressCountry": self.seo_set.struct_org_address_country,
             },
             "geo": {
                 "@type": "GeoCoordinates",
-                "latitude": float(page.struct_org_geo_lat),
-                "longitude": float(page.struct_org_geo_lng),
+                "latitude": float(self.seo_set.struct_org_geo_lat),
+                "longitude": float(self.seo_set.struct_org_geo_lng),
             },
             "openingHoursSpecification": [],
             "potentialAction": [],
         }
-        for spec in page.struct_org_hours:
+        for spec in self.seo_set.struct_org_hours:
             expected_dict["openingHoursSpecification"].append(spec.value.struct_dict)
-        for action in page.struct_org_actions:
+        for action in self.seo_set.struct_org_actions:
             expected_dict["potentialAction"].append(action.value.struct_dict)
-        expected_dict.update(json.loads(page.struct_org_extra_json))
+        expected_dict.update(json.loads(self.seo_set.struct_org_extra_json))
 
         expected_json = json.dumps(expected_dict, cls=utils.StructDataEncoder)
 
@@ -295,6 +306,7 @@ class SeoTest(TestCase):
                 "name": page.seo_author,
             },
             "image": [img1x1, img4x3, img16x9],
+            "publisher": page.seo_struct_publisher_dict,
         }
         expected_json = json.dumps(expected_dict, cls=utils.StructDataEncoder)
 

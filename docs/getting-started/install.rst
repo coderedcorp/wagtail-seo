@@ -91,6 +91,19 @@ and a link to an AMP version of the page (if applicable).
       {% include "wagtailseo/struct_data.html" %}
     </body>
 
+Additionally, in the template used by the root pages of each of your sites,
+add the structured org data at the bottom of the ``body`` tag.
+This will enable search engines to have access to all the necessary
+information about your organization.
+
+.. code-block:: html
+
+    <body>
+      ...
+      {% include "wagtailseo/struct_data.html" %}
+      {% include "wagtailseo/struct_org_data.html" %}
+    </body>
+
 All done. Your page will now render with just about every form of metadata a
 search engine or social media site could ask for!
 

@@ -1,6 +1,7 @@
 import json
 from datetime import datetime
 from enum import Enum
+from functools import cached_property
 from typing import Optional
 
 from django.db import models
@@ -50,36 +51,53 @@ class TwitterCard(Enum):
     SUMMARY = "summary"
 
 
-class SeoMixin(Page):
+@register_setting(icon="wagtailseo-line-chart")
+class SeoSettings(BaseSiteSetting):
     """
-    Contains fields for SEO-related attributes on a Page model.
+    Toggle Search engine optimization features and meta tags.
     """
 
     class Meta:
-        abstract = True
+        verbose_name = _("SEO")
 
-    canonical_url = models.URLField(
-        blank=True,
-        max_length=255,
-        verbose_name=_("Canonical URL"),
-        help_text=_("Leave blank to use the page's URL."),
+    og_meta = models.BooleanField(
+        default=True,
+        verbose_name=_("Use Open Graph Markup"),
+        help_text=_(
+            "Show an optimized preview when linking to this site on social media. "
+            "See https://ogp.me/"
+        ),
     )
-    og_image = models.ForeignKey(
-        get_image_model_string(),
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-        related_name="+",
-        verbose_name=_("Preview image"),
-        help_text=_("Shown when linking to this page on social media."),
+    twitter_meta = models.BooleanField(
+        default=True,
+        verbose_name=_("Use Twitter Markup"),
+        help_text=_(
+            "Shows content as a card when linking to this site on Twitter. "
+            "See https://developer.twitter.com/en/docs/twitter-for-websites/cards"
+        ),
     )
+    twitter_site = models.CharField(
+        max_length=16,
+        blank=True,
+        verbose_name=_("Twitter Account"),
+        help_text=_("The @username of the website owner’s Twitter handle."),
+    )
+    struct_meta = models.BooleanField(
+        default=True,
+        verbose_name=_("Use Structured Data"),
+        help_text=_(
+            "Optimizes information about your organization for search engines. "
+            "See https://schema.org/"
+        ),
+    )
+
     struct_org_type = models.CharField(
         default="",
         blank=True,
         max_length=255,
         choices=schema.SCHEMA_ORG_CHOICES,
         verbose_name=_("Organization type"),
-        help_text=_("If blank, no structured data will be used on this page."),
+        help_text=_("Organization business type."),
     )
     struct_org_name = models.CharField(
         default="",
@@ -191,6 +209,78 @@ class SeoMixin(Page):
         ),
     )
 
+    @property
+    def at_twitter_site(self):
+        """
+        The Twitter site handle, prepended with "@".
+        """
+        handle = self.twitter_site.lstrip("@")
+        return "@{0}".format(handle)
+
+    seo_struct_panels = [
+        MultiFieldPanel(
+            [
+                HelpPanel(
+                    heading=_("About Organization Structured Data"),
+                    content=_(schema.SCHEMA_HELP),
+                ),
+                FieldPanel("struct_org_type"),
+                FieldPanel("struct_org_name"),
+                FieldPanel("struct_org_logo"),
+                FieldPanel("struct_org_image"),
+                FieldPanel("struct_org_phone"),
+                FieldPanel("struct_org_address_street"),
+                FieldPanel("struct_org_address_locality"),
+                FieldPanel("struct_org_address_region"),
+                FieldPanel("struct_org_address_postal"),
+                FieldPanel("struct_org_address_country"),
+                FieldPanel("struct_org_geo_lat"),
+                FieldPanel("struct_org_geo_lng"),
+                FieldPanel("struct_org_hours"),
+                FieldPanel("struct_org_actions"),
+                FieldPanel("struct_org_extra_json"),
+            ],
+            _("Structured Data - Organization"),
+        ),
+    ]
+
+    panels = [
+        MultiFieldPanel(
+            [
+                FieldPanel("og_meta"),
+                FieldPanel("struct_meta"),
+                FieldPanel("twitter_meta"),
+                FieldPanel("twitter_site"),
+            ],
+            heading=_("Search Engine Optimization"),
+        )
+    ] + seo_struct_panels
+
+
+class SeoMixin(Page):
+    """
+    Contains fields for SEO-related attributes on a Page model.
+    """
+
+    class Meta:
+        abstract = True
+
+    canonical_url = models.URLField(
+        blank=True,
+        max_length=255,
+        verbose_name=_("Canonical URL"),
+        help_text=_("Leave blank to use the page's URL."),
+    )
+    og_image = models.ForeignKey(
+        get_image_model_string(),
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name="+",
+        verbose_name=_("Preview image"),
+        help_text=_("Shown when linking to this page on social media."),
+    )
+
     # The content type of this page, for search engines.
     seo_content_type = SeoType.WEBSITE
 
@@ -280,13 +370,17 @@ class SeoMixin(Page):
             return utils.ensure_absolute_url(url, base_url)
         return ""
 
+    @cached_property
+    def seo_settings(self) -> SeoSettings:
+        return SeoSettings.for_site(site=self.get_site())
+
     @property
     def seo_logo(self) -> Optional[AbstractImage]:
         """
         Gets the primary logo of the organization.
         """
-        if self.struct_org_logo:
-            return self.struct_org_logo
+        if self.seo_settings.struct_org_logo:
+            return self.seo_settings.struct_org_logo
         return None
 
     @property
@@ -357,8 +451,8 @@ class SeoMixin(Page):
         """
         Gets org name for structured data using a fallback.
         """
-        if self.struct_org_name:
-            return self.struct_org_name
+        if self.seo_settings.struct_org_name:
+            return self.seo_settings.struct_org_name
         return self.seo_sitename
 
     @property
@@ -390,27 +484,27 @@ class SeoMixin(Page):
             )
 
         # Image.
-        if self.struct_org_image:
+        if self.seo_settings.struct_org_image:
             images = utils.get_struct_data_images(
-                self.get_site(), self.struct_org_image
+                self.get_site(), self.seo_settings.struct_org_image
             )
             sd_dict.update({"image": images})
 
         # Telephone.
-        if self.struct_org_phone:
-            sd_dict.update({"telephone": self.struct_org_phone})
+        if self.seo_settings.struct_org_phone:
+            sd_dict.update({"telephone": self.seo_settings.struct_org_phone})
 
         # Address.
-        if self.struct_org_address_street:
+        if self.seo_settings.struct_org_address_street:
             sd_dict.update(
                 {
                     "address": {
                         "@type": "PostalAddress",
-                        "streetAddress": self.struct_org_address_street,
-                        "addressLocality": self.struct_org_address_locality,
-                        "addressRegion": self.struct_org_address_region,
-                        "postalCode": self.struct_org_address_postal,
-                        "addressCountry": self.struct_org_address_country,
+                        "streetAddress": self.seo_settings.struct_org_address_street,
+                        "addressLocality": self.seo_settings.struct_org_address_locality,
+                        "addressRegion": self.seo_settings.struct_org_address_region,
+                        "postalCode": self.seo_settings.struct_org_address_postal,
+                        "addressCountry": self.seo_settings.struct_org_address_country,
                     },
                 }
             )
@@ -433,38 +527,41 @@ class SeoMixin(Page):
         sd_dict = self.seo_struct_org_base_dict
 
         # Override org type to use specific type.
-        if self.struct_org_type:
-            sd_dict.update({"@type": self.struct_org_type})
+        if self.seo_settings.struct_org_type:
+            sd_dict.update({"@type": self.seo_settings.struct_org_type})
 
         # Geo coordinates.
-        if self.struct_org_geo_lat and self.struct_org_geo_lng:
+        if (
+            self.seo_settings.struct_org_geo_lat
+            and self.seo_settings.struct_org_geo_lng
+        ):
             sd_dict.update(
                 {
                     "geo": {
                         "@type": "GeoCoordinates",
-                        "latitude": float(self.struct_org_geo_lat),
-                        "longitude": float(self.struct_org_geo_lng),
+                        "latitude": float(self.seo_settings.struct_org_geo_lat),
+                        "longitude": float(self.seo_settings.struct_org_geo_lng),
                     },
                 }
             )
 
         # Hours of operation.
-        if self.struct_org_hours:
+        if self.seo_settings.struct_org_hours:
             hours = []
-            for spec in self.struct_org_hours:
+            for spec in self.seo_settings.struct_org_hours:
                 hours.append(spec.value.struct_dict)
             sd_dict.update({"openingHoursSpecification": hours})
 
         # Actions.
-        if self.struct_org_actions:
+        if self.seo_settings.struct_org_actions:
             actions = []
-            for action in self.struct_org_actions:
+            for action in self.seo_settings.struct_org_actions:
                 actions.append(action.value.struct_dict)
             sd_dict.update({"potentialAction": actions})
 
         # Extra JSON.
-        if self.struct_org_extra_json:
-            sd_dict.update(json.loads(self.struct_org_extra_json))
+        if self.seo_settings.struct_org_extra_json:
+            sd_dict.update(json.loads(self.seo_settings.struct_org_extra_json))
 
         return sd_dict
 
@@ -475,15 +572,9 @@ class SeoMixin(Page):
     @property
     def seo_struct_publisher_dict(self) -> Optional[dict]:
         """
-        Gets the base organization info from either this page, or the root page.
+        Gets the base organization info.
         """
-        if self.struct_org_type:
-            return self.seo_struct_org_base_dict
-        else:
-            root_page = self.get_site().root_page.specific
-            if hasattr(root_page, "seo_struct_org_base_dict"):
-                return root_page.seo_struct_org_base_dict
-        return None
+        return self.seo_struct_org_base_dict or None
 
     @property
     def seo_struct_article_dict(self) -> dict:
@@ -542,92 +633,4 @@ class SeoMixin(Page):
         ),
     ]
 
-    seo_struct_panels = [
-        MultiFieldPanel(
-            [
-                HelpPanel(
-                    heading=_("About Organization Structured Data"),
-                    content=_(schema.SCHEMA_HELP),
-                ),
-                FieldPanel("struct_org_type"),
-                FieldPanel("struct_org_name"),
-                FieldPanel("struct_org_logo"),
-                FieldPanel("struct_org_image"),
-                FieldPanel("struct_org_phone"),
-                FieldPanel("struct_org_address_street"),
-                FieldPanel("struct_org_address_locality"),
-                FieldPanel("struct_org_address_region"),
-                FieldPanel("struct_org_address_postal"),
-                FieldPanel("struct_org_address_country"),
-                FieldPanel("struct_org_geo_lat"),
-                FieldPanel("struct_org_geo_lng"),
-                FieldPanel("struct_org_hours"),
-                FieldPanel("struct_org_actions"),
-                FieldPanel("struct_org_extra_json"),
-            ],
-            _("Structured Data - Organization"),
-        ),
-    ]
-
-    seo_panels = seo_meta_panels + seo_menu_panels + seo_struct_panels
-
-
-@register_setting(icon="wagtailseo-line-chart")
-class SeoSettings(BaseSiteSetting):
-    """
-    Toggle Search engine optimization features and meta tags.
-    """
-
-    class Meta:
-        verbose_name = _("SEO")
-
-    og_meta = models.BooleanField(
-        default=True,
-        verbose_name=_("Use Open Graph Markup"),
-        help_text=_(
-            "Show an optimized preview when linking to this site on social media. "
-            "See https://ogp.me/"
-        ),
-    )
-    twitter_meta = models.BooleanField(
-        default=True,
-        verbose_name=_("Use Twitter Markup"),
-        help_text=_(
-            "Shows content as a card when linking to this site on Twitter. "
-            "See https://developer.twitter.com/en/docs/twitter-for-websites/cards"
-        ),
-    )
-    twitter_site = models.CharField(
-        max_length=16,
-        blank=True,
-        verbose_name=_("Twitter Account"),
-        help_text=_("The @username of the website owner’s Twitter handle."),
-    )
-    struct_meta = models.BooleanField(
-        default=True,
-        verbose_name=_("Use Structured Data"),
-        help_text=_(
-            "Optimizes information about your organization for search engines. "
-            "See https://schema.org/"
-        ),
-    )
-
-    @property
-    def at_twitter_site(self):
-        """
-        The Twitter site handle, prepended with "@".
-        """
-        handle = self.twitter_site.lstrip("@")
-        return "@{0}".format(handle)
-
-    panels = [
-        MultiFieldPanel(
-            [
-                FieldPanel("og_meta"),
-                FieldPanel("struct_meta"),
-                FieldPanel("twitter_meta"),
-                FieldPanel("twitter_site"),
-            ],
-            heading=_("Search Engine Optimization"),
-        )
-    ]
+    seo_panels = seo_meta_panels + seo_menu_panels
