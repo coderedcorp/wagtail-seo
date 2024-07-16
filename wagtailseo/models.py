@@ -6,21 +6,15 @@ from typing import Optional
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from wagtail import VERSION as WAG_VERSION
-from wagtail.admin.panels import FieldPanel
-from wagtail.admin.panels import HelpPanel
-from wagtail.admin.panels import MultiFieldPanel
+from wagtail.admin.panels import FieldPanel, HelpPanel, MultiFieldPanel
 from wagtail.contrib.settings.models import register_setting
 from wagtail.fields import StreamField
 from wagtail.images import get_image_model_string
 from wagtail.images.models import AbstractImage
 from wagtail.models import Page
 
-from wagtailseo import schema
-from wagtailseo import settings
-from wagtailseo import utils
-from wagtailseo.blocks import OpenHoursBlock
-from wagtailseo.blocks import StructuredDataActionBlock
-
+from wagtailseo import schema, settings, utils
+from wagtailseo.blocks import OpenHoursBlock, StructuredDataActionBlock
 
 # Wagtail 3
 if WAG_VERSION[0] == 3:
@@ -50,7 +44,7 @@ class TwitterCard(Enum):
     SUMMARY = "summary"
 
 
-class SeoMixin(Page):
+class SeoMixinBase(models.Model):
     """
     Contains fields for SEO-related attributes on a Page model.
     """
@@ -227,9 +221,7 @@ class SeoMixin(Page):
         Gets the name of the author of this page.
         Override in your Page model as necessary.
         """
-        if self.owner:
-            return self.owner.get_full_name()
-        return ""
+        raise NotImplementedError
 
     @property
     def seo_canonical_url(self) -> str:
@@ -242,7 +234,13 @@ class SeoMixin(Page):
                 url = getattr(self, attr)
                 if url:
                     return url
-        return self.get_full_url()
+        get_full_url = getattr(self, "get_full_url", None)
+        if callable(get_full_url):
+            return get_full_url()
+        raise NotImplementedError(
+            "You need to provide a get_full_url method "
+            "or override the seo_canonical_url property."
+        )
 
     @property
     def seo_description(self) -> str:
@@ -333,7 +331,7 @@ class SeoMixin(Page):
 
         # Fallback to wagtail.Page.title plus site name.
         return "{0} {1} {2}".format(
-            self.title, settings.get("WAGTAILSEO_SEP"), self.seo_sitename
+            str(self), settings.get("WAGTAILSEO_SEP"), self.seo_sitename
         )
 
     @property
@@ -342,7 +340,15 @@ class SeoMixin(Page):
         Gets the date this page was first published.
         Override in your Page model as necessary.
         """
-        return self.first_published_at
+        raise NotImplementedError
+
+    @property
+    def seo_modified_at(self) -> datetime:
+        """
+        Gets the date this page was first published.
+        Override in your Page model as necessary.
+        """
+        raise NotImplementedError
 
     @property
     def seo_twitter_card_content(self) -> str:
@@ -494,10 +500,10 @@ class SeoMixin(Page):
                 "@type": "WebPage",
                 "@id": self.seo_canonical_url,
             },
-            "headline": self.title,
+            "headline": str(self),
             "description": self.seo_description,
             "datePublished": self.seo_published_at,
-            "dateModified": self.last_published_at,
+            "dateModified": self.seo_modified_at,
             "author": {
                 "@type": "Person",
                 "name": self.seo_author,
@@ -523,9 +529,6 @@ class SeoMixin(Page):
     seo_meta_panels = [
         MultiFieldPanel(
             [
-                FieldPanel("slug", **slug_field_kwargs),
-                FieldPanel("seo_title"),
-                FieldPanel("search_description"),
                 FieldPanel("canonical_url"),
                 FieldPanel("og_image"),
             ],
@@ -570,6 +573,65 @@ class SeoMixin(Page):
     ]
 
     seo_panels = seo_meta_panels + seo_menu_panels + seo_struct_panels
+
+    def get_site(self):
+        if hasattr(super(), "get_site"):
+            return super().get_site()
+        raise NotImplementedError
+
+
+class SeoMixin(SeoMixinBase, Page):
+    class Meta:
+        abstract = True
+
+    @property
+    def seo_author(self) -> str:
+        """
+        Gets the name of the author of this page.
+        Override in your Page model as necessary.
+        """
+        if self.owner:
+            return self.owner.get_full_name()
+        return ""
+
+    @property
+    def seo_published_at(self) -> datetime:
+        """
+        Gets the date this page was first published.
+        Override in your Page model as necessary.
+        """
+        return self.first_published_at
+
+    @property
+    def seo_modified_at(self) -> datetime:
+        """
+        Gets the date this page was first published.
+        Override in your Page model as necessary.
+        """
+        return self.last_published_at
+
+    seo_meta_panels = [
+        MultiFieldPanel(
+            [
+                FieldPanel("slug", **slug_field_kwargs),
+                FieldPanel("seo_title"),
+                FieldPanel("search_description"),
+            ]
+            + SeoMixinBase.seo_meta_panels[0].children,
+            _("Search and Social Previews"),
+        ),
+    ]
+
+    seo_menu_panels = [
+        MultiFieldPanel(
+            [
+                FieldPanel("show_in_menus"),
+            ],
+            _("Navigation"),
+        ),
+    ]
+
+    seo_panels = seo_meta_panels + seo_menu_panels + SeoMixinBase.seo_struct_panels
 
 
 @register_setting(icon="wagtailseo-line-chart")

@@ -3,21 +3,16 @@ from decimal import Decimal
 
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
-from django.test import override_settings
-from django.test import TestCase
+from django.test import TestCase, override_settings
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.text import capfirst
-from wagtail.images.tests.utils import get_test_image_file
-from wagtail.images.tests.utils import Image
+from wagtail.images.tests.utils import Image, get_test_image_file
 from wagtail.models import Page
 from wagtail.test.utils import WagtailTestUtils
 
-from home.models import ArticlePage
-from home.models import SeoPage
-from home.models import WagtailPage
-from wagtailseo import schema
-from wagtailseo import utils
+from home.models import ArticlePage, BadWolf, MySnippet, SeoPage, WagtailPage
+from wagtailseo import schema, utils
 from wagtailseo.models import SeoSettings
 
 
@@ -101,12 +96,27 @@ class SeoTest(TestCase):
             content_type=cls.get_content_type("articlepage"),
         )
 
+        cls.my_snippet = MySnippet(
+            og_image=Image.objects.create(
+                title="Snippet OG Image",
+                file=get_test_image_file(),
+            ),
+        )
+
+        cls.bad_wolf = BadWolf(
+            og_image=Image.objects.create(
+                title="BadWolf OG Image",
+                file=get_test_image_file(),
+            ),
+        )
+
         # Add to home page.
         cls.page_home = Page.objects.get(slug="home")
         cls.page_home.add_child(instance=cls.page_wagtail)
         cls.page_home.add_child(instance=cls.page_lowseo)
         cls.page_home.add_child(instance=cls.page_fullseo)
         cls.page_home.add_child(instance=cls.page_article)
+        cls.my_snippet.save()
 
         # Set site name
         site = cls.page_home.get_site()
@@ -321,6 +331,69 @@ class SeoTest(TestCase):
             f"<title>{page.title} | {page.seo_sitename}</title>",
             response.content.decode("utf8"),
         )
+
+    def test_struct_snippet(self):
+        """
+        A page with SeoMixin set to article type should render correct
+        structured data.
+        """
+        my_snippet = self.my_snippet
+
+        # Manually render the JSON and match against page HTML.
+        # Get images to compare against rendered content.
+        base_url = utils.get_absolute_media_url(my_snippet.get_site())
+        img1x1 = base_url + my_snippet.seo_image.get_rendition("fill-10000x10000").url
+        img4x3 = base_url + my_snippet.seo_image.get_rendition("fill-40000x30000").url
+        img16x9 = base_url + my_snippet.seo_image.get_rendition("fill-16000x9000").url
+        expected_dict = {
+            "@context": "http://schema.org",
+            "@type": "Article",
+            "mainEntityOfPage": {
+                "@type": "WebPage",
+                "@id": my_snippet.seo_canonical_url,
+            },
+            "headline": str(my_snippet),
+            "description": "",
+            "datePublished": my_snippet.seo_published_at,
+            "dateModified": my_snippet.seo_modified_at,
+            "author": {
+                "@type": "Person",
+                "name": "Tux",
+            },
+            "image": [img1x1, img4x3, img16x9],
+        }
+        expected_json = json.dumps(expected_dict, cls=utils.StructDataEncoder)
+
+        # GET the page and check its JSON against expected JSON.
+        response = self.client.get(
+            reverse("my_snippet_detail", kwargs={"pk": my_snippet.pk})
+        )
+        self.assertEqual(response.status_code, 200)
+        self.maxDiff = None
+        print(response.content.decode("utf8"))
+        self.assertInHTML(
+            f"""
+            <script type="application/ld+json">
+            { expected_json }
+            </script>
+            """,  # noqa
+            response.content.decode("utf8"),
+        )
+
+    def test_not_implemented(self):
+        """
+        Ensure NotImplemented Errors are raised on required properties
+        """
+        with self.assertRaises(NotImplementedError):
+            self.bad_wolf.seo_author
+        with self.assertRaises(NotImplementedError):
+            self.bad_wolf.seo_canonical_url
+        with self.assertRaises(NotImplementedError):
+            self.bad_wolf.seo_published_at
+        with self.assertRaises(NotImplementedError):
+            self.bad_wolf.seo_modified_at
+        with self.assertRaises(NotImplementedError):
+            self.bad_wolf.get_site()
 
 
 class TestSettingMenu(WagtailTestUtils, TestCase):
