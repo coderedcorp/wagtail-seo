@@ -1,14 +1,13 @@
 -e ./
 
-black
+build
 codespell>=2
-flake8
-isort
 mypy
 pytest
 pytest-cov
 pytest-django
+ruff
+setuptools>=65.5
 sphinx
 sphinx_wagtail_theme
 twine
-wheel
