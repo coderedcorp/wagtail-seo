@@ -416,7 +416,9 @@ class SeoMixin(Page):
 
     @property
     def seo_struct_org_base_json(self) -> str:
-        return json.dumps(self.seo_struct_org_base_dict, cls=utils.StructDataEncoder)
+        return json.dumps(
+            self.seo_struct_org_base_dict, cls=utils.StructDataEncoder
+        )
 
     @property
     def seo_struct_org_dict(self) -> dict:
@@ -504,7 +506,11 @@ class SeoMixin(Page):
         # Image, if available.
         if self.seo_image:
             sd_dict.update(
-                {"image": utils.get_struct_data_images(self.get_site(), self.seo_image)}
+                {
+                    "image": utils.get_struct_data_images(
+                        self.get_site(), self.seo_image
+                    )
+                }
             )
 
         # Publisher, if available.
@@ -515,7 +521,9 @@ class SeoMixin(Page):
 
     @property
     def seo_struct_article_json(self) -> str:
-        return json.dumps(self.seo_struct_article_dict, cls=utils.StructDataEncoder)
+        return json.dumps(
+            self.seo_struct_article_dict, cls=utils.StructDataEncoder
+        )
 
     seo_meta_panels = [
         MultiFieldPanel(
