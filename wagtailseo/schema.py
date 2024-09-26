@@ -1,8 +1,8 @@
 SCHEMA_HELP = (
-    "Structured data defines brand, contact, and storefront information to search "
-    "engines. This information should be provided on the site’s root page (home page). "
-    "If your organization has multiple locations, also provide this info on each "
-    "location page using that particular location’s info."
+    "Structured data defines brand, contact, and storefront information to "
+    "search engines. This information applies to the whole site."
+    "If your organization has multiple locations or branches, also provide "
+    "this info on each page representing the location."
 )
 
 # fmt: off

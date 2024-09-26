@@ -4,10 +4,13 @@ Release Notes
 3.0.0
 -----
 
-* Move SeoMixin struct_org information to SEOSettings instead and add dedicated template
+**This release contains breaking changes!**
 
-/!\\ The template change and DB migration of those fields will need to be handled,
-see :doc:`/getting-started/migration-3`.
+* Move Organization fields from individual pages (``SeoMixin``) to Site settings (``SeoSettings``).
+
+* Organization fields (``struct_org_*``) and metadata fields (e.g. ``og_image``) have been split out into mixins: ``SeoOrgFields`` and ``SeoMetaFields``. This enables more customized use on models, snippets, pages, settings, etc.
+
+See :doc:`/getting-started/migration-3`.
 
 2.5.0
 -----

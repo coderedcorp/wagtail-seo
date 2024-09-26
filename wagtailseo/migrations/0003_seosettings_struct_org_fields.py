@@ -4,12 +4,13 @@ from django.db import migrations, models
 import django.db.models.deletion
 import wagtail.blocks
 import wagtail.fields
+from wagtail.images import get_image_model_string
 
 
 class Migration(migrations.Migration):
     dependencies = [
-        ("wagtailimages", "0024_index_image_file_hash"),
         ("wagtailseo", "0002_remove_seosettings_amp_pages"),
+        migrations.swappable_dependency(get_image_model_string()),
     ]
 
     operations = [
@@ -238,7 +239,7 @@ class Migration(migrations.Migration):
                 null=True,
                 on_delete=django.db.models.deletion.SET_NULL,
                 related_name="+",
-                to="wagtailimages.image",
+                to=get_image_model_string(),
                 verbose_name="Photo of Organization",
             ),
         ),
@@ -251,7 +252,7 @@ class Migration(migrations.Migration):
                 null=True,
                 on_delete=django.db.models.deletion.SET_NULL,
                 related_name="+",
-                to="wagtailimages.image",
+                to=get_image_model_string(),
                 verbose_name="Organization logo",
             ),
         ),

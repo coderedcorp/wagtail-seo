@@ -1,27 +1,62 @@
 Migrating to version 3.0 of Wagtail SEO
 ===========================================
 
-If you are in a version < 3 and would like to upgrade, you will need
-to take care of some change to the underlying data models as well as templates.
-In version 3, you will need to add the following line to the body of the template used by your root page:
+If you are in a version < 3 and would like to upgrade, you will need to take care of some change to the underlying data models as well as templates. In version 3, you will need to add the following line to the body of the template used by your root page:
 
-   .. code-block:: html
+.. code-block:: html
 
-    <body>
-      ...
-      {% include "wagtailseo/struct_data.html" %}
-      {% include "wagtailseo/struct_org_data.html" %}
-    </body>
+   <body>
+     ...
+     {% include "wagtailseo/struct_data.html" %}
+     {% include "wagtailseo/struct_org_data.html" %}
+   </body>
 
 Also, in version 3 the structured data has moved from being fields of ``SeoMixin``
-to being set on the seo settings of the site. As such, to avoid having to
-fill organization data again, the data migration should be taken care of.
+(on every page) to the SEO site settings. This means the under the default implementation, each site will have **one** organization.
+
+
+Separate organization data per page
+-----------------------------------
+
+If you were previously using different Organization data on each page (not common), then you will need to re-implement this on your Page models. Most sites should skip this step, unless the site has multiple locations, branches, franchises, etc.
+
+To do this, you'll need to add the Organization fields to your page model, and then override the getter to load from the page rather than the settings:
+
+.. code-block:: python
+
+   # Add ``SeoOrgFields`` before ``SeoMixin``.
+   class MyPage(SeoOrgFields, SeoMixin, Page):
+
+       ...
+
+       # Override the getter to return the page, rather than the
+       # SeoSettings, when getting the organization data.
+       def seo_org_fields(self):
+          return self
+
+After doing this, there should not be any migration changes. Double check by making migrations:
+
+.. code-block:: console
+
+   $ python manage.py makemigrations
+
+
+Migrating organization data to site settings
+--------------------------------------------
+
+If you prefer to re-enter the organization data manually, you can skip the steps below. However, we recommend creating a migration to preserve the data.
+
+This migration should manually copy the ``struct_org_*`` fields from your Site's Root Page into the ``SeoSettings``.
 
 For the most common case, the procedure is the following:
 
 #. Create the new migration file(s)
 
-#. For each created file, add wagtailseo last migration as a dependency
+   .. code-block:: console
+
+      $ python manage.py makemigrations
+
+#. For each created file, add the wagtailseo migration as a dependency:
 
    .. code-block:: python
 
@@ -33,10 +68,7 @@ For the most common case, the procedure is the following:
                 ("wagtailseo", "0003_seosettings_struct_org_fields"),
             ]
 
-
-#. Add a ``RunPython`` operation as your **first** operation. The code should handle
-   populating the settings structured data using existing pages, as well as the reverse operation.
-   Adapt depending on how you filled the structured data for your current site.
+#. Edit your generated migration files to add a ``RunPython`` operation as your **first** operation. The code should handle populating the settings structured data using existing pages, as well as the reverse operation. Adapt depending on how you filled the structured data for your current site.
 
    .. code-block:: python
 
@@ -94,6 +126,8 @@ For the most common case, the procedure is the following:
 
         def fill_pages_from_settings_struct_org(apps, schema_editor):
             """
+            The reverse migration.
+
             For every site, find the most top-level page inheriting from SeoMixin
             and fill its struct information using the site's settings
             """

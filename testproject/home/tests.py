@@ -222,11 +222,15 @@ class SeoTest(TestCase):
         base_url = utils.get_absolute_media_url(page.get_site())
         img1x1 = (
             base_url
-            + self.seo_set.struct_org_image.get_rendition("fill-10000x10000").url
+            + self.seo_set.struct_org_image.get_rendition(
+                "fill-10000x10000"
+            ).url
         )
         img4x3 = (
             base_url
-            + self.seo_set.struct_org_image.get_rendition("fill-40000x30000").url
+            + self.seo_set.struct_org_image.get_rendition(
+                "fill-40000x30000"
+            ).url
         )
         img16x9 = (
             base_url

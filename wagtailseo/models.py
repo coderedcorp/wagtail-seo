@@ -51,45 +51,17 @@ class TwitterCard(Enum):
     SUMMARY = "summary"
 
 
-@register_setting(icon="wagtailseo-line-chart")
-class SeoSettings(BaseSiteSetting):
+class SeoOrgFields(models.Model):
     """
-    Toggle Search engine optimization features and meta tags.
+    Mixin which contains data about the organization. Most likely,
+    sites will want this defined once on the site. However if there
+    are multiple locations/branches (e.g. a chain retail outlet), then
+    the site might want this data on pages that represent each
+    location.
     """
 
     class Meta:
-        verbose_name = _("SEO")
-
-    og_meta = models.BooleanField(
-        default=True,
-        verbose_name=_("Use Open Graph Markup"),
-        help_text=_(
-            "Show an optimized preview when linking to this site on social media. "
-            "See https://ogp.me/"
-        ),
-    )
-    twitter_meta = models.BooleanField(
-        default=True,
-        verbose_name=_("Use Twitter Markup"),
-        help_text=_(
-            "Shows content as a card when linking to this site on Twitter. "
-            "See https://developer.twitter.com/en/docs/twitter-for-websites/cards"
-        ),
-    )
-    twitter_site = models.CharField(
-        max_length=16,
-        blank=True,
-        verbose_name=_("Twitter Account"),
-        help_text=_("The @username of the website owner’s Twitter handle."),
-    )
-    struct_meta = models.BooleanField(
-        default=True,
-        verbose_name=_("Use Structured Data"),
-        help_text=_(
-            "Optimizes information about your organization for search engines. "
-            "See https://schema.org/"
-        ),
-    )
+        abstract = True
 
     struct_org_type = models.CharField(
         default="",
@@ -209,14 +181,6 @@ class SeoSettings(BaseSiteSetting):
         ),
     )
 
-    @property
-    def at_twitter_site(self):
-        """
-        The Twitter site handle, prepended with "@".
-        """
-        handle = self.twitter_site.lstrip("@")
-        return "@{0}".format(handle)
-
     seo_struct_panels = [
         MultiFieldPanel(
             [
@@ -244,22 +208,12 @@ class SeoSettings(BaseSiteSetting):
         ),
     ]
 
-    panels = [
-        MultiFieldPanel(
-            [
-                FieldPanel("og_meta"),
-                FieldPanel("struct_meta"),
-                FieldPanel("twitter_meta"),
-                FieldPanel("twitter_site"),
-            ],
-            heading=_("Search Engine Optimization"),
-        )
-    ] + seo_struct_panels
 
-
-class SeoMixin(Page):
+class SeoMetaFields(models.Model):
     """
-    Contains fields for SEO-related attributes on a Page model.
+    Common metadata that should be on each page of the site.
+    Fields from ``Page`` object (such as title, description) are not
+    included here.
     """
 
     class Meta:
@@ -271,6 +225,7 @@ class SeoMixin(Page):
         verbose_name=_("Canonical URL"),
         help_text=_("Leave blank to use the page's URL."),
     )
+
     og_image = models.ForeignKey(
         get_image_model_string(),
         null=True,
@@ -283,6 +238,9 @@ class SeoMixin(Page):
 
     # The content type of this page, for search engines.
     seo_content_type = SeoType.WEBSITE
+
+    # The style of Twitter card to show.
+    seo_twitter_card = TwitterCard.SUMMARY
 
     # List of text attribute names on this model, in order of preference,
     # for use as the SEO description.
@@ -308,8 +266,75 @@ class SeoMixin(Page):
         "seo_title",  # Comes from wagtail.Page
     ]
 
-    # The style of Twitter card to show.
-    seo_twitter_card = TwitterCard.SUMMARY
+
+@register_setting(icon="wagtailseo-line-chart")
+class SeoSettings(SeoOrgFields, BaseSiteSetting):
+    """
+    Toggle Search engine optimization features and meta tags.
+    """
+
+    class Meta:
+        verbose_name = _("SEO")
+
+    og_meta = models.BooleanField(
+        default=True,
+        verbose_name=_("Use Open Graph Markup"),
+        help_text=_(
+            "Show an optimized preview when linking to this site on social media. "
+            "See https://ogp.me/"
+        ),
+    )
+    twitter_meta = models.BooleanField(
+        default=True,
+        verbose_name=_("Use Twitter Markup"),
+        help_text=_(
+            "Shows content as a card when linking to this site on Twitter. "
+            "See https://developer.twitter.com/en/docs/twitter-for-websites/cards"
+        ),
+    )
+    twitter_site = models.CharField(
+        max_length=16,
+        blank=True,
+        verbose_name=_("Twitter Account"),
+        help_text=_("The @username of the website owner’s Twitter handle."),
+    )
+    struct_meta = models.BooleanField(
+        default=True,
+        verbose_name=_("Use Structured Data"),
+        help_text=_(
+            "Optimizes information about your organization for search engines. "
+            "See https://schema.org/"
+        ),
+    )
+
+    @property
+    def at_twitter_site(self):
+        """
+        The Twitter site handle, prepended with "@".
+        """
+        handle = self.twitter_site.lstrip("@")
+        return "@{0}".format(handle)
+
+    panels = [
+        MultiFieldPanel(
+            [
+                FieldPanel("og_meta"),
+                FieldPanel("struct_meta"),
+                FieldPanel("twitter_meta"),
+                FieldPanel("twitter_site"),
+            ],
+            heading=_("Search Engine Optimization"),
+        )
+    ] + SeoOrgFields.seo_struct_panels
+
+
+class SeoMixin(SeoMetaFields, Page):
+    """
+    Contains fields for SEO-related attributes on a Page model.
+    """
+
+    class Meta:
+        abstract = True
 
     @property
     def seo_author(self) -> str:
@@ -371,7 +396,13 @@ class SeoMixin(Page):
         return ""
 
     @cached_property
-    def seo_settings(self) -> SeoSettings:
+    def seo_org_fields(self) -> SeoOrgFields:
+        """
+        Under the default implementation, Org info is stored on
+        the settings model. If you wish to store Org data on specific
+        pages, override this method to return ``self`` or some other
+        class containing ``SeoOrgFields``
+        """
         return SeoSettings.for_site(site=self.get_site())
 
     @property
@@ -379,8 +410,8 @@ class SeoMixin(Page):
         """
         Gets the primary logo of the organization.
         """
-        if self.seo_settings.struct_org_logo:
-            return self.seo_settings.struct_org_logo
+        if self.seo_org_fields.struct_org_logo:
+            return self.seo_org_fields.struct_org_logo
         return None
 
     @property
@@ -451,8 +482,8 @@ class SeoMixin(Page):
         """
         Gets org name for structured data using a fallback.
         """
-        if self.seo_settings.struct_org_name:
-            return self.seo_settings.struct_org_name
+        if self.seo_org_fields.struct_org_name:
+            return self.seo_org_fields.struct_org_name
         return self.seo_sitename
 
     @property
@@ -484,27 +515,27 @@ class SeoMixin(Page):
             )
 
         # Image.
-        if self.seo_settings.struct_org_image:
+        if self.seo_org_fields.struct_org_image:
             images = utils.get_struct_data_images(
-                self.get_site(), self.seo_settings.struct_org_image
+                self.get_site(), self.seo_org_fields.struct_org_image
             )
             sd_dict.update({"image": images})
 
         # Telephone.
-        if self.seo_settings.struct_org_phone:
-            sd_dict.update({"telephone": self.seo_settings.struct_org_phone})
+        if self.seo_org_fields.struct_org_phone:
+            sd_dict.update({"telephone": self.seo_org_fields.struct_org_phone})
 
         # Address.
-        if self.seo_settings.struct_org_address_street:
+        if self.seo_org_fields.struct_org_address_street:
             sd_dict.update(
                 {
                     "address": {
                         "@type": "PostalAddress",
-                        "streetAddress": self.seo_settings.struct_org_address_street,
-                        "addressLocality": self.seo_settings.struct_org_address_locality,
-                        "addressRegion": self.seo_settings.struct_org_address_region,
-                        "postalCode": self.seo_settings.struct_org_address_postal,
-                        "addressCountry": self.seo_settings.struct_org_address_country,
+                        "streetAddress": self.seo_org_fields.struct_org_address_street,
+                        "addressLocality": self.seo_org_fields.struct_org_address_locality,
+                        "addressRegion": self.seo_org_fields.struct_org_address_region,
+                        "postalCode": self.seo_org_fields.struct_org_address_postal,
+                        "addressCountry": self.seo_org_fields.struct_org_address_country,
                     },
                 }
             )
@@ -529,41 +560,47 @@ class SeoMixin(Page):
         sd_dict = self.seo_struct_org_base_dict
 
         # Override org type to use specific type.
-        if self.seo_settings.struct_org_type:
-            sd_dict.update({"@type": self.seo_settings.struct_org_type})
+        if self.seo_org_fields.struct_org_type:
+            sd_dict.update({"@type": self.seo_org_fields.struct_org_type})
 
         # Geo coordinates.
         if (
-            self.seo_settings.struct_org_geo_lat
-            and self.seo_settings.struct_org_geo_lng
+            self.seo_org_fields.struct_org_geo_lat
+            and self.seo_org_fields.struct_org_geo_lng
         ):
             sd_dict.update(
                 {
                     "geo": {
                         "@type": "GeoCoordinates",
-                        "latitude": float(self.seo_settings.struct_org_geo_lat),
-                        "longitude": float(self.seo_settings.struct_org_geo_lng),
+                        "latitude": float(
+                            self.seo_org_fields.struct_org_geo_lat
+                        ),
+                        "longitude": float(
+                            self.seo_org_fields.struct_org_geo_lng
+                        ),
                     },
                 }
             )
 
         # Hours of operation.
-        if self.seo_settings.struct_org_hours:
+        if self.seo_org_fields.struct_org_hours:
             hours = []
-            for spec in self.seo_settings.struct_org_hours:
+            for spec in self.seo_org_fields.struct_org_hours:
                 hours.append(spec.value.struct_dict)
             sd_dict.update({"openingHoursSpecification": hours})
 
         # Actions.
-        if self.seo_settings.struct_org_actions:
+        if self.seo_org_fields.struct_org_actions:
             actions = []
-            for action in self.seo_settings.struct_org_actions:
+            for action in self.seo_org_fields.struct_org_actions:
                 actions.append(action.value.struct_dict)
             sd_dict.update({"potentialAction": actions})
 
         # Extra JSON.
-        if self.seo_settings.struct_org_extra_json:
-            sd_dict.update(json.loads(self.seo_settings.struct_org_extra_json))
+        if self.seo_org_fields.struct_org_extra_json:
+            sd_dict.update(
+                json.loads(self.seo_org_fields.struct_org_extra_json)
+            )
 
         return sd_dict
 
