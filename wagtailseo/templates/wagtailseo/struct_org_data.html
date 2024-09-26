@@ -1,0 +1,9 @@
+{% spaceless %}
+{% block struct_seo_org %}
+{% if settings.wagtailseo.SeoSettings.struct_org_type and settings.wagtailseo.SeoSettings.struct_meta %}
+<script type="application/ld+json">
+  {{ self.seo_struct_org_json | safe }}
+</script>
+{% endif %}
+{% endblock %}
+{% endspaceless %}

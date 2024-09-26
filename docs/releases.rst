@@ -1,6 +1,17 @@
 Release Notes
 =============
 
+3.0.0
+-----
+
+**This release contains breaking changes!**
+
+* Move Organization fields from individual pages (``SeoMixin``) to Site settings (``SeoSettings``).
+
+* Organization fields (``struct_org_*``) and metadata fields (e.g. ``og_image``) have been split out into mixins: ``SeoOrgFields`` and ``SeoMetaFields``. This enables more customized use on models, snippets, pages, settings, etc.
+
+See :doc:`/getting-started/migration-3`.
+
 2.5.0
 -----
 

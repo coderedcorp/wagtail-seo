@@ -48,14 +48,14 @@ Search Engine "Rich Snippets"
 
 Structured Data, referred to by Google as "rich snippets", is special metadata
 which defines information about the content of the page, and the organization
-producing the content. The following Structured Data should be provided **once**
-on your site's home page. If you have a site containing multiple locations,
-such as branches, stores, regional offices, etc. --- also provide this info
-on each page representing a unique location.
+producing the content. The following Structured Data should be provided
+on your site's settings. Each site has its own settings to provide this information.
+To provide this info for multiple locations, such as branches, stores, regional
+offices, etc. --- they should all have their own site configured.
+As an alternative, `seo_struct_org_` accessors can be overridden in models
+inheriting from `SeoMixin`.
 
-* **Organization type** --- Should be provided on the home page. If this is
-  blank on a page, the info from the home page will be used instead when
-  necessary.
+* **Organization type** --- Should be provided to identify the type of business.
 
 * **Organization name** --- The name as it will show up in search results, maps,
   business listings, etc. If blank, the site name from **Settings > Sites** is
