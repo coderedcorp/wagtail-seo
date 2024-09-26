@@ -120,7 +120,9 @@ Articles
 
 Wagtail SEO also provides Structured Data markup (a.k.a. "rich snippets") for
 article type pages using a combination of the information above and the page's
-included data (date published, author, etc.). No additional action is required
+included data (date published, author, etc.).
+
+You only need to set ``seo_content_type = SeoType.ARTICLE`` inside the page model
 to enable article markup.
 
 Others

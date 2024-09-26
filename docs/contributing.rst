@@ -35,7 +35,7 @@ To set up your development environment:
 
    .. code-block:: shell
 
-       pip install -r requirements-dev.txt
+      pip install -r requirements-dev.txt
 
 #. Write some code.
 
@@ -43,10 +43,10 @@ To set up your development environment:
 
    .. code-block:: shell
 
-       black .
-       codespell .
-       flake8 .
-       mypy ./wagtailseo/
+      ruff format .
+      ruff check --fix .
+      codespell .
+      mypy ./wagtailseo/
 
 #. Next, run the units tests. A simple Wagtail project using Wagtail SEO is
    in the ``testproject/`` directory. The tests will also generate a code
@@ -54,7 +54,7 @@ To set up your development environment:
 
    .. code-block:: shell
 
-       pytest ./testproject/
+      pytest ./testproject/
 
 
 Documentation
@@ -65,7 +65,7 @@ To build the documentation, run the following, which will output to the
 
 .. code-block:: shell
 
-    sphinx-build -M html ./docs/ ./docs/_build/ -W
+   sphinx-build -M html ./docs/ ./docs/_build/ -W
 
 
 Publishing
@@ -77,6 +77,4 @@ those could include files from other builds and create broken wheels.
 
 .. code-block:: shell
 
-   rm -r ./build/
-   rm -r ./dist/
-   python setup.py sdist bdist_wheel
+   python -m build

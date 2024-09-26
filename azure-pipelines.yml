@@ -70,11 +70,10 @@ stages:
         testResultsFiles: '**/test-*.xml'
         testRunTitle: 'Publish test results for Python $(python.version)'
 
-    - task: PublishCodeCoverageResults@1
+    - task: PublishCodeCoverageResults@2
       displayName: 'Publish code coverage report'
       condition: succeededOrFailed()
       inputs:
-        codeCoverageTool: Cobertura
         summaryFileLocation: '$(System.DefaultWorkingDirectory)/coverage.xml'
 
 
@@ -92,7 +91,7 @@ stages:
     - task: UsePythonVersion@0
       displayName: 'Use Python version'
       inputs:
-        versionSpec: '3.11'
+        versionSpec: '3.12'
         architecture: 'x64'
 
     - script: python -m pip install -r requirements-dev.txt
@@ -101,35 +100,14 @@ stages:
     - script: codespell .
       displayName: 'CR-QC: Spell check'
 
-    - script: flake8 .
-      displayName: 'CR-QC: Style check'
+    - script: ruff check .
+      displayName: 'CR-QC: Lint'
 
-    - script: black --check .
+    - script: ruff format --check .
       displayName: 'CR-QC: Format check'
 
     - script: mypy ./wagtailseo/
       displayName: 'CR-QC: Type check'
-
-  # - job: codecov
-  #   displayName: Code Coverage
-  #   pool:
-  #     vmImage: 'ubuntu-latest'
-
-  #   steps:
-  #   - task: DownloadBuildArtifacts@0
-  #     displayName: 'Download code coverage from current build'
-  #     inputs:
-  #       buildType: 'current'
-  #       project: '$(System.TeamProjectId)'
-  #       pipeline: '$(System.DefinitionId)'
-  #       downloadType: 'specific'
-  #       downloadPath: '$(Agent.WorkFolder)/current-artifacts'
-
-  #   - pwsh: ./ci/compare-codecov.ps1 -wd $Env:WorkDir
-  #     displayName: 'CR-QC: Compare code coverage'
-  #     failOnStderr: false
-  #     env:
-  #       WorkDir: $(Agent.WorkFolder)
 
   - job: docs
     displayName: Documentation

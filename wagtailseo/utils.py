@@ -69,9 +69,15 @@ def get_struct_data_images(site: Site, image: AbstractImage) -> List[str]:
     # Use huge numbers because Wagtail will not upscale, but will max out at the
     # image's original resolution using the specified aspect ratio.
     # Google wants them high resolution.
-    img1x1 = ensure_absolute_url(image.get_rendition("fill-10000x10000").url, base_url)
-    img4x3 = ensure_absolute_url(image.get_rendition("fill-40000x30000").url, base_url)
-    img16x9 = ensure_absolute_url(image.get_rendition("fill-16000x9000").url, base_url)
+    img1x1 = ensure_absolute_url(
+        image.get_rendition("fill-10000x10000").url, base_url
+    )
+    img4x3 = ensure_absolute_url(
+        image.get_rendition("fill-40000x30000").url, base_url
+    )
+    img16x9 = ensure_absolute_url(
+        image.get_rendition("fill-16000x9000").url, base_url
+    )
 
     return [img1x1, img4x3, img16x9]
 

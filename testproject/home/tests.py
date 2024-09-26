@@ -3,13 +3,13 @@ from decimal import Decimal
 
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
-from django.test import override_settings
 from django.test import TestCase
+from django.test import override_settings
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.text import capfirst
-from wagtail.images.tests.utils import get_test_image_file
 from wagtail.images.tests.utils import Image
+from wagtail.images.tests.utils import get_test_image_file
 from wagtail.models import Page
 from wagtail.test.utils import WagtailTestUtils
 
@@ -24,7 +24,9 @@ from wagtailseo.models import SeoSettings
 class SeoTest(TestCase):
     @classmethod
     def get_content_type(cls, modelname: str):
-        ctype, _ = ContentType.objects.get_or_create(model=modelname, app_label="home")
+        ctype, _ = ContentType.objects.get_or_create(
+            model=modelname, app_label="home"
+        )
         return ctype
 
     @classmethod
@@ -93,7 +95,9 @@ class SeoTest(TestCase):
         site.save()
 
         # Turn on all SEO settings.
-        cls.seo_set: SeoSettings = SeoSettings.for_site(cls.page_home.get_site())
+        cls.seo_set: SeoSettings = SeoSettings.for_site(
+            cls.page_home.get_site()
+        )
         cls.seo_set.og_meta = True
         cls.seo_set.twitter_meta = True
         cls.seo_set.struct_meta = True
@@ -256,7 +260,9 @@ class SeoTest(TestCase):
             "potentialAction": [],
         }
         for spec in self.seo_set.struct_org_hours:
-            expected_dict["openingHoursSpecification"].append(spec.value.struct_dict)
+            expected_dict["openingHoursSpecification"].append(
+                spec.value.struct_dict
+            )
         for action in self.seo_set.struct_org_actions:
             expected_dict["potentialAction"].append(action.value.struct_dict)
         expected_dict.update(json.loads(self.seo_set.struct_org_extra_json))
