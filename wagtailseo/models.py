@@ -309,7 +309,7 @@ class SeoSettings(SeoOrgFields, BaseSiteSetting):
         ),
     )
 
-    @property
+    @cached_property
     def at_twitter_site(self):
         """
         The Twitter site handle, prepended with "@".
@@ -403,7 +403,7 @@ class SeoMixin(SeoMetaFields, Page):
 
     # -- SEO properties -------------------------------------------------------
 
-    @property
+    @cached_property
     def seo_author(self) -> str:
         """
         Gets the name of the author of this page.
@@ -413,7 +413,7 @@ class SeoMixin(SeoMetaFields, Page):
             return self.owner.get_full_name()
         return ""
 
-    @property
+    @cached_property
     def seo_canonical_url(self) -> str:
         """
         Gets the full/absolute/canonical URL preferred for meta tags and search engines.
@@ -426,7 +426,7 @@ class SeoMixin(SeoMetaFields, Page):
                     return url
         return self.get_full_url()
 
-    @property
+    @cached_property
     def seo_description(self) -> str:
         """
         Gets the correct search engine and Open Graph description of this page.
@@ -439,7 +439,7 @@ class SeoMixin(SeoMetaFields, Page):
                     return text
         return ""
 
-    @property
+    @cached_property
     def seo_image(self) -> Optional[AbstractImage]:
         """
         Gets the primary Open Graph image of this page.
@@ -451,7 +451,7 @@ class SeoMixin(SeoMetaFields, Page):
                     return image
         return None
 
-    @property
+    @cached_property
     def seo_image_url(self) -> str:
         """
         Gets the absolute URL for the primary Open Graph image of this page.
@@ -472,7 +472,7 @@ class SeoMixin(SeoMetaFields, Page):
         """
         return SeoSettings.for_site(site=self.get_site())
 
-    @property
+    @cached_property
     def seo_logo(self) -> Optional[AbstractImage]:
         """
         Gets the primary logo of the organization.
@@ -481,7 +481,7 @@ class SeoMixin(SeoMetaFields, Page):
             return self.seo_org_fields.struct_org_logo
         return None
 
-    @property
+    @cached_property
     def seo_logo_url(self) -> str:
         """
         Gets the absolute URL for the organization logo.
@@ -492,7 +492,7 @@ class SeoMixin(SeoMetaFields, Page):
             return utils.ensure_absolute_url(url, base_url)
         return ""
 
-    @property
+    @cached_property
     def seo_og_type(self) -> str:
         """
         Gets the correct Open Graph type for this page.
@@ -500,7 +500,7 @@ class SeoMixin(SeoMetaFields, Page):
         """
         return self.seo_content_type.value
 
-    @property
+    @cached_property
     def seo_sitename(self) -> str:
         """
         Gets the site name.
@@ -511,7 +511,7 @@ class SeoMixin(SeoMetaFields, Page):
             return s.site_name
         return ""
 
-    @property
+    @cached_property
     def seo_pagetitle(self) -> str:
         """
         Gets the correct search engine and Open Graph title of this page.
@@ -528,7 +528,7 @@ class SeoMixin(SeoMetaFields, Page):
             self.title, settings.get("WAGTAILSEO_SEP"), self.seo_sitename
         )
 
-    @property
+    @cached_property
     def seo_published_at(self) -> datetime:
         """
         Gets the date this page was first published.
@@ -536,7 +536,7 @@ class SeoMixin(SeoMetaFields, Page):
         """
         return self.first_published_at
 
-    @property
+    @cached_property
     def seo_twitter_card_content(self) -> str:
         """
         Gets the correct style of twitter card for this page.
@@ -544,7 +544,7 @@ class SeoMixin(SeoMetaFields, Page):
         """
         return self.seo_twitter_card.value
 
-    @property
+    @cached_property
     def seo_struct_org_name(self) -> str:
         """
         Gets org name for structured data using a fallback.
@@ -553,7 +553,7 @@ class SeoMixin(SeoMetaFields, Page):
             return self.seo_org_fields.struct_org_name
         return self.seo_sitename
 
-    @property
+    @cached_property
     def seo_struct_org_base_dict(self) -> dict:
         """
         Gets generic "Organization" data for use as a subset of other
@@ -609,13 +609,13 @@ class SeoMixin(SeoMetaFields, Page):
 
         return sd_dict
 
-    @property
+    @cached_property
     def seo_struct_org_base_json(self) -> str:
         return json.dumps(
             self.seo_struct_org_base_dict, cls=utils.StructDataEncoder
         )
 
-    @property
+    @cached_property
     def seo_struct_org_dict(self) -> dict:
         """
         Gets full "Organization" structured data on top of base organization data.
@@ -671,18 +671,18 @@ class SeoMixin(SeoMetaFields, Page):
 
         return sd_dict
 
-    @property
+    @cached_property
     def seo_struct_org_json(self) -> str:
         return json.dumps(self.seo_struct_org_dict, cls=utils.StructDataEncoder)
 
-    @property
+    @cached_property
     def seo_struct_publisher_dict(self) -> Optional[dict]:
         """
         Gets the base organization info.
         """
         return self.seo_struct_org_base_dict or None
 
-    @property
+    @cached_property
     def seo_struct_article_dict(self) -> dict:
         sd_dict = {
             "@context": "http://schema.org",
@@ -717,7 +717,7 @@ class SeoMixin(SeoMetaFields, Page):
 
         return sd_dict
 
-    @property
+    @cached_property
     def seo_struct_article_json(self) -> str:
         return json.dumps(
             self.seo_struct_article_dict, cls=utils.StructDataEncoder
