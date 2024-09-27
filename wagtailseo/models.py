@@ -235,7 +235,11 @@ class SeoMetaFields(models.Model):
         on_delete=models.SET_NULL,
         related_name="+",
         verbose_name=_("Preview image"),
-        help_text=_("Shown when linking to this page on social media."),
+        help_text=_(
+            "Shown when linking to this page on social media. "
+            "If blank, may show an image from the page, "
+            "or the default from Settings > SEO."
+        ),
     )
 
     # The content type of this page, for search engines.
@@ -308,6 +312,18 @@ class SeoSettings(SeoOrgFields, BaseSiteSetting):
             "See https://schema.org/"
         ),
     )
+    og_image_default = models.ForeignKey(
+        get_image_model_string(),
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name="+",
+        verbose_name=_("Default preview image"),
+        help_text=_(
+            "Shown when linking to this page on social media. "
+            "This can also be customized on each page."
+        ),
+    )
 
     @property
     def at_twitter_site(self):
@@ -324,6 +340,7 @@ class SeoSettings(SeoOrgFields, BaseSiteSetting):
                 FieldPanel("struct_meta"),
                 FieldPanel("twitter_meta"),
                 FieldPanel("twitter_site"),
+                FieldPanel("og_image_default"),
             ],
             heading=_("Search Engine Optimization"),
         )
@@ -449,6 +466,9 @@ class SeoMixin(SeoMetaFields, Page):
                 image = getattr(self, attr)
                 if isinstance(image, AbstractImage):
                     return image
+        default = SeoSettings.for_site(site=self.get_site()).og_image_default
+        if default:
+            return default
         return None
 
     @property
