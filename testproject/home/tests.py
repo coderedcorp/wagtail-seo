@@ -95,7 +95,7 @@ class SeoTest(TestCase):
         site.save()
 
         # Turn on all SEO settings.
-        cls.seo_set: SeoSettings = SeoSettings.for_site(
+        cls.seo_set = SeoSettings.for_site(
             cls.page_home.get_site()
         )
         cls.seo_set.og_meta = True
