@@ -1,9 +1,11 @@
 import json
+import re
 from datetime import datetime
 from enum import Enum
 from functools import cached_property
 from typing import Optional
 
+from bs4 import BeautifulSoup
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from wagtail import VERSION as WAG_VERSION
@@ -335,6 +337,71 @@ class SeoMixin(SeoMetaFields, Page):
 
     class Meta:
         abstract = True
+
+    # -- Wagtail property overloads -------------------------------------------
+
+    @property
+    def preview_modes(self):
+        return super().preview_modes + [
+            ("wagtail-seo", _("SEO Preview")),
+        ]
+
+    def get_preview_context(self, request, mode_name):
+        ctx = super().get_preview_context(request, mode_name)
+        if mode_name != "wagtail-seo":
+            return ctx
+
+        # Render a normal preview, so we can parse some stuff from the HTML.
+        pre = self.serve_preview(request, self.default_preview_mode)
+        pre.render()
+        soup = BeautifulSoup(pre.content)
+        icon_link = soup.find("link", rel="icon")
+        if icon_link:
+            icon_href = icon_link["href"]
+        else:
+            icon_href = None
+
+        # Extract the base domain from the full URL.
+        match = re.search(
+            r"https?://(?:www\.)?([^/]+)",
+            self.seo_canonical_url,
+        )
+        if match:
+            site_domain = match.group(1)
+        else:
+            site_domain = self.seo_canonical_url
+
+        # Check for warnings.
+        warnings = []
+        if not self.seo_sitename:
+            warnings.append(_("Set site name in Settings > Sites."))
+        if len(self.seo_title) > 60:
+            warnings.append(
+                _(
+                    "Title tag should be shorter than 60 characters (including spaces)."
+                )
+            )
+        if len(self.seo_description) < 50 or len(self.seo_description) > 160:
+            warnings.append(
+                _(
+                    "Meta description should be between 50 to 160 characters (including spaces)."
+                )
+            )
+        ctx.update(
+            {
+                "seo_favicon": icon_href,
+                "seo_site_domain": site_domain,
+                "seo_warnings": warnings,
+            }
+        )
+        return ctx
+
+    def get_preview_template(self, request, mode_name):
+        if mode_name == "wagtail-seo":
+            return "wagtailseo/search-preview.html"
+        return super().get_preview_template(request, mode_name)
+
+    # -- SEO properties -------------------------------------------------------
 
     @property
     def seo_author(self) -> str:

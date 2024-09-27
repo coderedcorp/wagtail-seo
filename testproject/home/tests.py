@@ -95,9 +95,7 @@ class SeoTest(TestCase):
         site.save()
 
         # Turn on all SEO settings.
-        cls.seo_set = SeoSettings.for_site(
-            cls.page_home.get_site()
-        )
+        cls.seo_set = SeoSettings.for_site(cls.page_home.get_site())
         cls.seo_set.og_meta = True
         cls.seo_set.twitter_meta = True
         cls.seo_set.struct_meta = True
@@ -343,6 +341,14 @@ class SeoTest(TestCase):
             f"<title>{page.title} | {page.seo_sitename}</title>",
             response.content.decode("utf8"),
         )
+
+    def test_preview(self):
+        """
+        Tests the wagtail page preview, in SEO mode.
+        """
+        page = self.page_fullseo
+        response = page.make_preview_request(preview_mode="wagtail-seo")
+        self.assertEqual(response.status_code, 200)
 
 
 class TestSettingMenu(WagtailTestUtils, TestCase):
