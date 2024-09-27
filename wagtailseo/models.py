@@ -381,7 +381,7 @@ class SeoMixin(SeoMetaFields, Page):
                     "Title tag should be shorter than 60 characters (including spaces)."
                 )
             )
-        if 50 > len(self.seo_description) > 160:
+        if len(self.seo_description) < 50 or len(self.seo_description) > 160:
             warnings.append(
                 _(
                     "Meta description should be between 50 to 160 characters (including spaces)."
