@@ -11,7 +11,6 @@ authors = [
 classifiers = [
     "Framework :: Django",
     "Framework :: Wagtail",
-    "Framework :: Wagtail :: 3",
     "Framework :: Wagtail :: 4",
     "Framework :: Wagtail :: 5",
     "Framework :: Wagtail :: 6",
@@ -24,14 +23,14 @@ classifiers = [
     "Topic :: Internet :: WWW/HTTP :: Site Management",
 ]
 dependencies = [
-    "wagtail>=3.0,<7",
+    "wagtail>=4.0,<7",
 ]
 description = "Search engine and social media optimization for Wagtail."
 dynamic = ["version"]
 license = {file = "LICENSE.txt"}
 name = "wagtail-seo"
 readme = "README.md"
-requires-python = ">=3.8"
+requires-python = ">=3.9"
 
 [project.urls]
 Source = "https://github.com/coderedcorp/wagtail-seo"

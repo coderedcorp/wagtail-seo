@@ -11,12 +11,9 @@
 #
 # Use PowerShell Core for any utility scripts so they are reusable across
 # Windows, macOS, and Linux.
-#
-
 
 trigger:
   - main
-
 
 stages:
 - stage: Unit_Tests
@@ -29,9 +26,6 @@ stages:
       vmImage: 'ubuntu-latest'
     strategy:
       matrix:
-        py3.8_wag3:
-          PYTHON_VERSION: '3.8'
-          WAGTAIL: '3.*'
         py3.9_wag4:
           PYTHON_VERSION: '3.9'
           WAGTAIL: '4.*'
@@ -43,6 +37,9 @@ stages:
           WAGTAIL: '5.*'
         py3.12_wag6:
           PYTHON_VERSION: '3.12'
+          WAGTAIL: '6.*'
+        py3.13_wag6:
+          PYTHON_VERSION: '3.13'
           WAGTAIL: '6.*'
 
     steps:
@@ -91,7 +88,7 @@ stages:
     - task: UsePythonVersion@0
       displayName: 'Use Python version'
       inputs:
-        versionSpec: '3.12'
+        versionSpec: '3.13'
         architecture: 'x64'
 
     - script: python -m pip install -r requirements-dev.txt
@@ -118,7 +115,7 @@ stages:
     - task: UsePythonVersion@0
       displayName: 'Use Python version'
       inputs:
-        versionSpec: '3.11'
+        versionSpec: '3.13'
         architecture: 'x64'
 
     - script: python -m pip install -r requirements-dev.txt
