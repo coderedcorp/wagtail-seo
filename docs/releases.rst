@@ -6,9 +6,13 @@ Release Notes
 
 **This release contains breaking changes!**
 
+* NEW: Search engine and social media previews in the preview pane!
+
+* Officially support Python 3.13, and drop support for Python 3.8 and Wagtail 3.
+
 * Move Organization fields from individual pages (``SeoMixin``) to Site settings (``SeoSettings``).
 
-* Organization fields (``struct_org_*``) and metadata fields (e.g. ``og_image``) have been split out into mixins: ``SeoOrgFields`` and ``SeoMetaFields``. This enables more customized use on models, snippets, pages, settings, etc.
+  * Organization fields (``struct_org_*``) and metadata fields (e.g. ``og_image``) have been split out into mixins: ``SeoOrgFields`` and ``SeoMetaFields``. This enables more customized use on models, snippets, pages, settings, etc.
 
 See :doc:`/getting-started/migration-3`.
 
