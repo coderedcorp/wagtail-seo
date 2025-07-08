@@ -41,6 +41,9 @@ stages:
         py3.13_wag6:
           PYTHON_VERSION: '3.13'
           WAGTAIL: '6.*'
+        py3.13_wag7:
+          PYTHON_VERSION: "3.13"
+          WAGTAIL: '7.*'
 
     steps:
     - task: UsePythonVersion@0
