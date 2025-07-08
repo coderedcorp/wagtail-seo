@@ -373,8 +373,10 @@ class SeoMixin(SeoMetaFields, Page):
         pre.render()
         soup = BeautifulSoup(pre.content)
         icon_link = soup.find("link", rel="icon")
-        if icon_link:
-            icon_href = icon_link["href"]
+        if icon_link and hasattr(icon_link, "get"):
+            icon_href = icon_link.get("href")  # type: ignore
+        elif icon_link:
+            icon_href = icon_link["href"]  # type: ignore
         else:
             icon_href = None
 
