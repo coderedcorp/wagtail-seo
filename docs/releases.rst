@@ -1,6 +1,13 @@
 Release Notes
 =============
 
+
+3.1.0
+-----
+
+* Add support for Wagtail 7.
+
+
 3.0.0
 -----
 
@@ -16,10 +23,12 @@ Release Notes
 
 See :doc:`/getting-started/migration-3`.
 
+
 2.5.0
 -----
 
 * Add support for Wagtail 6.
+
 
 2.4.1
 -----
