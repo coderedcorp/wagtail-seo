@@ -154,20 +154,20 @@ class SeoTest(TestCase):
             self.assertInHTML(
                 f"""
                 <head>
-                <title>{ page.seo_pagetitle }</title>
-                <link rel="canonical" href="{ page.seo_canonical_url }">
-                <meta name="description" content="{ page.seo_description }" />
-                <meta property="og:title" content="{ page.seo_pagetitle }" />
-                <meta property="og:description" content="{ page.seo_description }" />
-                <meta property="og:image" content="{ page.seo_image_url }" />
-                <meta property="og:site_name" content="{ page.seo_sitename }" />
-                <meta property="og:url" content="{ page.seo_canonical_url }" />
-                <meta property="og:type" content="{ page.seo_og_type }" />
-                <meta name="twitter:card" content="{ page.seo_twitter_card_content }" />
-                <meta name="twitter:title" content="{ page.seo_pagetitle }">
-                <meta name="twitter:image" content="{ page.seo_image_url }">
-                <meta name="twitter:description" content="{ page.seo_description }" />
-                <meta name="twitter:site" content="{ seo_set.at_twitter_site }" />
+                <title>{page.seo_pagetitle}</title>
+                <link rel="canonical" href="{page.seo_canonical_url}">
+                <meta name="description" content="{page.seo_description}" />
+                <meta property="og:title" content="{page.seo_pagetitle}" />
+                <meta property="og:description" content="{page.seo_description}" />
+                <meta property="og:image" content="{page.seo_image_url}" />
+                <meta property="og:site_name" content="{page.seo_sitename}" />
+                <meta property="og:url" content="{page.seo_canonical_url}" />
+                <meta property="og:type" content="{page.seo_og_type}" />
+                <meta name="twitter:card" content="{page.seo_twitter_card_content}" />
+                <meta name="twitter:title" content="{page.seo_pagetitle}">
+                <meta name="twitter:image" content="{page.seo_image_url}">
+                <meta name="twitter:description" content="{page.seo_description}" />
+                <meta name="twitter:site" content="{seo_set.at_twitter_site}" />
                 </head>
                 """,
                 response.content.decode("utf8"),
@@ -186,24 +186,24 @@ class SeoTest(TestCase):
         self.assertInHTML(
             f"""
             <head>
-            <title>{ page.seo_pagetitle }</title>
-            <link rel="canonical" href="{ page.seo_canonical_url }">
-            <meta name="description" content="{ page.seo_description }" />
-            <meta name="author" content="{ page.seo_author }" />
-            <meta property="og:title" content="{ page.seo_pagetitle }" />
-            <meta property="og:description" content="{ page.seo_description }" />
-            <meta property="og:image" content="{ page.seo_image_url }" />
-            <meta property="og:site_name" content="{ page.seo_sitename }" />
-            <meta property="og:url" content="{ page.seo_canonical_url }" />
-            <meta property="og:type" content="{ page.seo_og_type }" />
-            <meta property="article:author" content="{ page.seo_author }" />
-            <meta property="article:published_time" content="{ utils.serialize_date(page.seo_published_at) }" />
-            <meta property="article:modified_time" content="{ utils.serialize_date(page.last_published_at) }" />
-            <meta name="twitter:card" content="{ page.seo_twitter_card_content }" />
-            <meta name="twitter:title" content="{ page.seo_pagetitle }">
-            <meta name="twitter:image" content="{ page.seo_image_url }">
-            <meta name="twitter:description" content="{ page.seo_description }" />
-            <meta name="twitter:site" content="{ seo_set.at_twitter_site }" />
+            <title>{page.seo_pagetitle}</title>
+            <link rel="canonical" href="{page.seo_canonical_url}">
+            <meta name="description" content="{page.seo_description}" />
+            <meta name="author" content="{page.seo_author}" />
+            <meta property="og:title" content="{page.seo_pagetitle}" />
+            <meta property="og:description" content="{page.seo_description}" />
+            <meta property="og:image" content="{page.seo_image_url}" />
+            <meta property="og:site_name" content="{page.seo_sitename}" />
+            <meta property="og:url" content="{page.seo_canonical_url}" />
+            <meta property="og:type" content="{page.seo_og_type}" />
+            <meta property="article:author" content="{page.seo_author}" />
+            <meta property="article:published_time" content="{utils.serialize_date(page.seo_published_at)}" />
+            <meta property="article:modified_time" content="{utils.serialize_date(page.last_published_at)}" />
+            <meta name="twitter:card" content="{page.seo_twitter_card_content}" />
+            <meta name="twitter:title" content="{page.seo_pagetitle}">
+            <meta name="twitter:image" content="{page.seo_image_url}">
+            <meta name="twitter:description" content="{page.seo_description}" />
+            <meta name="twitter:site" content="{seo_set.at_twitter_site}" />
             </head>
             """,  # noqa
             response.content.decode("utf8"),
@@ -279,7 +279,7 @@ class SeoTest(TestCase):
         self.assertInHTML(
             f"""
             <script type="application/ld+json">
-            { expected_json }
+            {expected_json}
             </script>
             """,  # noqa
             response.content.decode("utf8"),
@@ -326,7 +326,7 @@ class SeoTest(TestCase):
         self.assertInHTML(
             f"""
             <script type="application/ld+json">
-            { expected_json }
+            {expected_json}
             </script>
             """,  # noqa
             response.content.decode("utf8"),
