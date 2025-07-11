@@ -2,6 +2,12 @@ Release Notes
 =============
 
 
+3.1.1
+-----
+
+* Handle errors when Site is None when getting absolute media URL.
+
+
 3.1.0
 -----
 
@@ -22,6 +28,12 @@ Release Notes
   * Organization fields (``struct_org_*``) and metadata fields (e.g. ``og_image``) have been split out into mixins: ``SeoOrgFields`` and ``SeoMetaFields``. This enables more customized use on models, snippets, pages, settings, etc.
 
 See :doc:`/getting-started/migration-3`.
+
+
+2.5.1
+-----
+
+* Handle errors when Site is None when getting absolute media URL.
 
 
 2.5.0
