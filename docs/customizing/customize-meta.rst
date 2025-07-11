@@ -189,7 +189,7 @@ first make a property on the page model:
                 # structured data image fields. This will render the image in
                 # 1:1, 4:3, and 16:9 aspect ratios with very high resolution
                 # and return a list of URLs.
-                "image": get_struct_data_images(self.recipe_photo),
+                "image": get_struct_data_images(self.get_site(), self.recipe_photo),
 
                 "author": {
                     "@type": "Person",

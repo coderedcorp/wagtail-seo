@@ -4,6 +4,7 @@ from datetime import datetime
 from datetime import time
 from json import JSONEncoder
 from typing import List
+from typing import Optional
 from typing import Union
 
 from django.conf import settings
@@ -28,7 +29,7 @@ def serialize_date(date: Union[date, datetime, time]) -> str:
     return date.isoformat()
 
 
-def get_absolute_media_url(site: Site) -> str:
+def get_absolute_media_url(site: Optional[Site]) -> str:
     """
     Returns an absolute base URL for media files.
 
@@ -40,7 +41,7 @@ def get_absolute_media_url(site: Site) -> str:
     :rtype: str
     :returns: The absolute base URL for media files of this site.
     """
-    if MEDIA_IS_ABSOLUTE:
+    if MEDIA_IS_ABSOLUTE or site is None:
         return ""
 
     return site.root_url
