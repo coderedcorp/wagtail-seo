@@ -1,10 +1,18 @@
 Release Notes
 =============
 
+
+2.5.1
+-----
+
+* Handle errors when Site is None when getting absolute media URL.
+
+
 2.5.0
 -----
 
 * Add support for Wagtail 6.
+
 
 2.4.1
 -----
