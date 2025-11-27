@@ -575,7 +575,7 @@ class SeoMixin(SeoMetaFields, Page):
             return self.seo_org_fields.struct_org_name
         return self.seo_sitename
 
-    @cached_property
+    @property
     def seo_struct_org_base_dict(self) -> dict:
         """
         Gets generic "Organization" data for use as a subset of other
@@ -637,7 +637,7 @@ class SeoMixin(SeoMetaFields, Page):
             self.seo_struct_org_base_dict, cls=utils.StructDataEncoder
         )
 
-    @cached_property
+    @property
     def seo_struct_org_dict(self) -> dict:
         """
         Gets full "Organization" structured data on top of base organization data.
@@ -697,14 +697,14 @@ class SeoMixin(SeoMetaFields, Page):
     def seo_struct_org_json(self) -> str:
         return json.dumps(self.seo_struct_org_dict, cls=utils.StructDataEncoder)
 
-    @cached_property
+    @property
     def seo_struct_publisher_dict(self) -> Optional[dict]:
         """
         Gets the base organization info.
         """
         return self.seo_struct_org_base_dict or None
 
-    @cached_property
+    @property
     def seo_struct_article_dict(self) -> dict:
         sd_dict = {
             "@context": "http://schema.org",
