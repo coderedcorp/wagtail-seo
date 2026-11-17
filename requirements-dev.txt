@@ -6,7 +6,7 @@ mypy
 pytest
 pytest-cov
 pytest-django
-ruff
+ruff==0.15.*
 setuptools>=65.5
 sphinx
 sphinx_wagtail_theme
