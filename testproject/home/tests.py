@@ -141,37 +141,70 @@ class SeoTest(TestCase):
         response = self.client.get(self.page_home.get_url())
         self.assertEqual(response.status_code, 200)
 
-    def test_meta(self):
+    def test_meta_noimage(self):
         """
         A page with SeoMixin should render with the correct meta attributes.
         """
-        for page in [self.page_lowseo, self.page_fullseo]:
-            seo_set = SeoSettings.for_site(page.get_site())
-            response = self.client.get(page.get_url())
-            self.assertEqual(response.status_code, 200)
-            self.maxDiff = None
-            print(response.content.decode("utf8"))
-            self.assertInHTML(
-                f"""
-                <head>
-                <title>{page.seo_pagetitle}</title>
-                <link rel="canonical" href="{page.seo_canonical_url}">
-                <meta name="description" content="{page.seo_description}" />
-                <meta property="og:title" content="{page.seo_pagetitle}" />
-                <meta property="og:description" content="{page.seo_description}" />
-                <meta property="og:image" content="{page.seo_image_url}" />
-                <meta property="og:site_name" content="{page.seo_sitename}" />
-                <meta property="og:url" content="{page.seo_canonical_url}" />
-                <meta property="og:type" content="{page.seo_og_type}" />
-                <meta name="twitter:card" content="{page.seo_twitter_card_content}" />
-                <meta name="twitter:title" content="{page.seo_pagetitle}">
-                <meta name="twitter:image" content="{page.seo_image_url}">
-                <meta name="twitter:description" content="{page.seo_description}" />
-                <meta name="twitter:site" content="{seo_set.at_twitter_site}" />
-                </head>
-                """,
-                response.content.decode("utf8"),
-            )
+        page = self.page_lowseo
+        seo_set = SeoSettings.for_site(page.get_site())
+        response = self.client.get(page.get_url())
+        self.assertEqual(response.status_code, 200)
+        self.maxDiff = None
+        print(response.content.decode("utf8"))
+        self.assertInHTML(
+            f"""
+            <head>
+            <title>{page.seo_pagetitle}</title>
+            <link rel="canonical" href="{page.seo_canonical_url}">
+            <meta name="description" content="{page.seo_description}" />
+            <meta property="og:title" content="{page.seo_pagetitle}" />
+            <meta property="og:description" content="{page.seo_description}" />
+            <meta property="og:site_name" content="{page.seo_sitename}" />
+            <meta property="og:url" content="{page.seo_canonical_url}" />
+            <meta property="og:type" content="{page.seo_og_type}" />
+            <meta name="twitter:card" content="{page.seo_twitter_card_content}" />
+            <meta name="twitter:title" content="{page.seo_pagetitle}">
+            <meta name="twitter:image" content="{page.seo_image_url}">
+            <meta name="twitter:description" content="{page.seo_description}" />
+            <meta name="twitter:site" content="{seo_set.at_twitter_site}" />
+            </head>
+            """,
+            response.content.decode("utf8"),
+        )
+
+    def test_meta_image(self):
+        """
+        A page with SeoMixin should render with the correct meta attributes.
+        """
+        page = self.page_fullseo
+        seo_set = SeoSettings.for_site(page.get_site())
+        response = self.client.get(page.get_url())
+        self.assertEqual(response.status_code, 200)
+        self.maxDiff = None
+        print(response.content.decode("utf8"))
+        self.assertInHTML(
+            f"""
+            <head>
+            <title>{page.seo_pagetitle}</title>
+            <link rel="canonical" href="{page.seo_canonical_url}">
+            <meta name="description" content="{page.seo_description}" />
+            <meta property="og:title" content="{page.seo_pagetitle}" />
+            <meta property="og:description" content="{page.seo_description}" />
+            <meta property="og:image" content="{page.seo_image_url}" />
+            <meta property="og:image:height" content="{page.seo_image.height}" />
+            <meta property="og:image:width" content="{page.seo_image.width}" />
+            <meta property="og:site_name" content="{page.seo_sitename}" />
+            <meta property="og:url" content="{page.seo_canonical_url}" />
+            <meta property="og:type" content="{page.seo_og_type}" />
+            <meta name="twitter:card" content="{page.seo_twitter_card_content}" />
+            <meta name="twitter:title" content="{page.seo_pagetitle}">
+            <meta name="twitter:image" content="{page.seo_image_url}">
+            <meta name="twitter:description" content="{page.seo_description}" />
+            <meta name="twitter:site" content="{seo_set.at_twitter_site}" />
+            </head>
+            """,
+            response.content.decode("utf8"),
+        )
 
     def test_meta_article(self):
         """
@@ -193,6 +226,8 @@ class SeoTest(TestCase):
             <meta property="og:title" content="{page.seo_pagetitle}" />
             <meta property="og:description" content="{page.seo_description}" />
             <meta property="og:image" content="{page.seo_image_url}" />
+            <meta property="og:image:height" content="{page.seo_image.height}" />
+            <meta property="og:image:width" content="{page.seo_image.width}" />
             <meta property="og:site_name" content="{page.seo_sitename}" />
             <meta property="og:url" content="{page.seo_canonical_url}" />
             <meta property="og:type" content="{page.seo_og_type}" />
