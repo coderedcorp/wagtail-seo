@@ -17,19 +17,19 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - python-version: '3.11'
+          - python: '3.11'
             wagtail: '3.*'
-          - python-version: '3.11'
+          - python: '3.11'
             wagtail: '4.1.*'
-          - python-version: '3.11'
+          - python: '3.11'
             wagtail: '5.2.*'
-          - python-version: '3.12'
+          - python: '3.12'
             wagtail: '6.3.*'
-          - python-version: '3.13'
+          - python: '3.13'
             wagtail: '7.*'
-          - python-version: '3.14'
+          - python: '3.14'
             wagtail: '8.*'
-          - python-version: '3.15'
+          - python: '3.15'
             wagtail: '8.*'
     steps:
       - uses: actions/checkout@v5
