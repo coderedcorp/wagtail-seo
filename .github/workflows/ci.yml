@@ -18,14 +18,17 @@ jobs:
       matrix:
         include:
           - python: "3.11"
-            wagtail: "5.*"
+            wagtail: "4.1.*"
+          - python: "3.11"
+            wagtail: "5.2.*"
           - python: "3.12"
-            wagtail: "6.*"
-          - python: "3.13"
-            wagtail: "6.*"
+            wagtail: "6.3.*"
           - python: "3.13"
             wagtail: "7.*"
-
+          - python: "3.14"
+            wagtail: "8.*"
+          - python: "3.15"
+            wagtail: "8.*"
     steps:
       - uses: actions/checkout@v5
 
