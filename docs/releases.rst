@@ -2,6 +2,16 @@ Release Notes
 =============
 
 
+3.2.0
+-----
+
+* Add support for Wagtail 8.
+
+* Do not include empty ``og:image`` meta tag when no image is available.
+
+* Generate ``og:image:height`` and ``og:image:width`` meta tags.
+
+
 3.1.1
 -----
 
