@@ -17,10 +17,6 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - python: "3.9"
-            wagtail: "4.*"
-          - python: "3.10"
-            wagtail: "5.*"
           - python: "3.11"
             wagtail: "5.*"
           - python: "3.12"
