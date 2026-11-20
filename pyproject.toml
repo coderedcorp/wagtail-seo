@@ -25,14 +25,14 @@ classifiers = [
     "Topic :: Internet :: WWW/HTTP :: Site Management",
 ]
 dependencies = [
-    "wagtail>=4.0,<9.0",
+    "wagtail>=4.0",
 ]
 description = "Search engine and social media optimization for Wagtail."
 dynamic = ["version"]
 license = {file = "LICENSE.txt"}
 name = "wagtail-seo"
 readme = "README.md"
-requires-python = ">=3.9"
+requires-python = ">=3.11"
 
 [project.urls]
 Changelog = "https://docs.coderedcorp.com/wagtail-seo/releases.html"
@@ -76,6 +76,7 @@ line-length = 80
 
 [tool.ruff.lint]
 extend-select = ["I"]
+ignore = ["RUF012"]
 
 [tool.ruff.lint.isort]
 case-sensitive = false

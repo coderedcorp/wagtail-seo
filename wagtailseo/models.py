@@ -3,7 +3,6 @@ import re
 from datetime import datetime
 from enum import Enum
 from functools import cached_property
-from typing import Optional
 
 from bs4 import BeautifulSoup
 from django.db import models
@@ -331,7 +330,7 @@ class SeoSettings(SeoOrgFields, BaseSiteSetting):
         The Twitter site handle, prepended with "@".
         """
         handle = self.twitter_site.lstrip("@")
-        return "@{0}".format(handle)
+        return f"@{handle}"
 
     panels = [
         MultiFieldPanel(
@@ -459,7 +458,7 @@ class SeoMixin(SeoMetaFields, Page):
         return ""
 
     @property
-    def seo_image(self) -> Optional[AbstractImage]:
+    def seo_image(self) -> AbstractImage | None:
         """
         Gets the primary Open Graph image of this page.
         """
@@ -495,7 +494,7 @@ class SeoMixin(SeoMetaFields, Page):
         return SeoSettings.for_site(site=self.get_site())
 
     @property
-    def seo_logo(self) -> Optional[AbstractImage]:
+    def seo_logo(self) -> AbstractImage | None:
         """
         Gets the primary logo of the organization.
         """
@@ -546,7 +545,7 @@ class SeoMixin(SeoMetaFields, Page):
                     return text
 
         # Fallback to wagtail.Page.title plus site name.
-        return "{0} {1} {2}".format(
+        return "{} {} {}".format(
             self.title, settings.get("WAGTAILSEO_SEP"), self.seo_sitename
         )
 
@@ -698,7 +697,7 @@ class SeoMixin(SeoMetaFields, Page):
         return json.dumps(self.seo_struct_org_dict, cls=utils.StructDataEncoder)
 
     @property
-    def seo_struct_publisher_dict(self) -> Optional[dict]:
+    def seo_struct_publisher_dict(self) -> dict | None:
         """
         Gets the base organization info.
         """

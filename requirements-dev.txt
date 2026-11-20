@@ -2,11 +2,11 @@
 
 build
 codespell>=2
-mypy
+mypy==2.4.*
 pytest
 pytest-cov
 pytest-django
-ruff==0.15.*
+ruff==0.17.*
 setuptools>=65.5
 sphinx
 sphinx_wagtail_theme

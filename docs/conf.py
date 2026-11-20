@@ -29,7 +29,7 @@ PROJECT_PATH = os.path.dirname(DOCS_PATH)
 
 project = "wagtail-seo"
 author = "CodeRed LLC"
-copyright = f"2020–{str(datetime.datetime.now().year)}, {author}"
+copyright = f"2020–{datetime.datetime.now().year!s}, {author}"
 
 
 # -- Setup Django ------------------------------------------------------------
