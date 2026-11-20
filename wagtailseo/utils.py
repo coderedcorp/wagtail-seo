@@ -3,9 +3,6 @@ from datetime import date
 from datetime import datetime
 from datetime import time
 from json import JSONEncoder
-from typing import List
-from typing import Optional
-from typing import Union
 
 from django.conf import settings
 from wagtail.images.models import AbstractImage
@@ -17,7 +14,7 @@ PROTOCOL_RE = re.compile(r"^(\w[\w\.\-\+]*:)*//")
 MEDIA_IS_ABSOLUTE = PROTOCOL_RE.match(settings.MEDIA_URL)
 
 
-def serialize_date(date: Union[date, datetime, time]) -> str:
+def serialize_date(date: date | datetime | time) -> str:
     """
     Serializes a datetime or time into ISO 8601 format required for Open Graph
     and Structured Data.
@@ -29,7 +26,7 @@ def serialize_date(date: Union[date, datetime, time]) -> str:
     return date.isoformat()
 
 
-def get_absolute_media_url(site: Optional[Site]) -> str:
+def get_absolute_media_url(site: Site | None) -> str:
     """
     Returns an absolute base URL for media files.
 
@@ -53,7 +50,7 @@ def ensure_absolute_url(url: str, base_url: str) -> str:
     return url
 
 
-def get_struct_data_images(site: Site, image: AbstractImage) -> List[str]:
+def get_struct_data_images(site: Site, image: AbstractImage) -> list[str]:
     """
     Google requires multiple different aspect ratios for certain structured
     data image fields. This will render the image in 1:1, 4:3, and 16:9 aspect

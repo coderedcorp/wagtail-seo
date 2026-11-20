@@ -118,8 +118,8 @@ class SeoTest(TestCase):
         cls.seo_set.struct_org_address_country = "US"
         cls.seo_set.struct_org_geo_lat = Decimal("1.1")
         cls.seo_set.struct_org_geo_lng = Decimal("2.2")
-        cls.seo_set.struct_org_hours = r'[{"type": "hours", "value": {"days": ["Monday", "Tuesday", "Wednesday"], "start_time": "09:00:00", "end_time": "17:00:00"}, "id": "d6ff4389-5c26-4b78-87cc-5e108bcb692d"}]'  # noqa
-        cls.seo_set.struct_org_actions = r'[{"type": "actions", "value": {"action_type": "OrderAction", "target": "https://www.example.com/", "language": "en-US", "result_type": "FoodEstablishmentReservation", "result_name": "Custom Result", "extra_json": ""}, "id": "4ef5ddc2-a25f-4263-8516-8262340e9a7f"}]'  # noqa
+        cls.seo_set.struct_org_hours = r'[{"type": "hours", "value": {"days": ["Monday", "Tuesday", "Wednesday"], "start_time": "09:00:00", "end_time": "17:00:00"}, "id": "d6ff4389-5c26-4b78-87cc-5e108bcb692d"}]'
+        cls.seo_set.struct_org_actions = r'[{"type": "actions", "value": {"action_type": "OrderAction", "target": "https://www.example.com/", "language": "en-US", "result_type": "FoodEstablishmentReservation", "result_name": "Custom Result", "extra_json": ""}, "id": "4ef5ddc2-a25f-4263-8516-8262340e9a7f"}]'
         cls.seo_set.struct_org_extra_json = (
             r'{"json": true, "array": ["thing1", "thing2"]}'
         )
@@ -240,7 +240,7 @@ class SeoTest(TestCase):
             <meta name="twitter:description" content="{page.seo_description}" />
             <meta name="twitter:site" content="{seo_set.at_twitter_site}" />
             </head>
-            """,  # noqa
+            """,
             response.content.decode("utf8"),
         )
 
@@ -316,7 +316,7 @@ class SeoTest(TestCase):
             <script type="application/ld+json">
             {expected_json}
             </script>
-            """,  # noqa
+            """,
             response.content.decode("utf8"),
         )
 
@@ -363,7 +363,7 @@ class SeoTest(TestCase):
             <script type="application/ld+json">
             {expected_json}
             </script>
-            """,  # noqa
+            """,
             response.content.decode("utf8"),
         )
 
