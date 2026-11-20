@@ -11,7 +11,7 @@ on:
 
 jobs:
   unit-tests:
-    name: pytest
+    name: Test py${{ matrix.python }} wag${{ matrix.wagtail }}
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
